@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jalwa Style Demo</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(180deg,#0b0f3a,#120d2e);
+    color:#fff;
+}
+.container{
+    max-width:420px;
+    margin:auto;
+    padding:15px;
+}
+.card{
+    background: linear-gradient(135deg,#00e6c3,#00bcd4);
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:15px;
+}
+.btn{
+    background:#00e6c3;
+    color:#000;
+    padding:12px;
+    border-radius:12px;
+    text-align:center;
+    margin-top:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.btn.gray{ background:#555; color:#ccc;}
+.nav{
+    display:flex;
+    justify-content:space-around;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#0a0a2a;
+    padding:10px 0;
+}
+.nav div{font-size:12px; color:#aaa;}
+h2{margin:5px 0 10px;}
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:none;
+}
+.hidden{display:none;}
+.game-grid{
+    display:grid;
+    grid-template-columns: repeat(5,1fr);
+    gap:10px;
+}
+.ball{
+    background:#222;
+    border-radius:50%;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+.green{background:#2ecc71;}
+.red{background:#e74c3c;}
+.violet{background:#9b59b6;}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="login">
+    <h2>Login</h2>
+    <input placeholder="Phone number">
+    <input placeholder="Password" type="password">
+    <div class="btn" onclick="show('home')">Log in</div>
+    <div class="btn gray" onclick="show('register')">Register</div>
+</div>
+
+<div class="container hidden" id="register">
+    <h2>Register</h2>
+    <input placeholder="Phone number">
+    <input placeholder="Password">
+    <div class="btn" onclick="show('login')">Create Account</div>
+</div>
+
+<div class="container hidden" id="home">
+    <div class="card">
+        <h3>Wallet Balance</h3>
+        <h2>₹0.41</h2>
+    </div>
+
+    <div class="btn" onclick="show('deposit')">Deposit</div>
+    <div class="btn" onclick="show('withdraw')">Withdraw</div>
+    <div class="btn" onclick="show('game')">Play Game</div>
+</div>
+
+<div class="container hidden" id="deposit">
+    <h2>Deposit (Demo)</h2>
+    <div class="card">UPI / QR / USDT (UI only)</div>
+    <div class="btn" onclick="show('home')">Back</div>
+</div>
+
+<div class="container hidden" id="withdraw">
+    <h2>Withdraw (Demo)</h2>
+    <div class="card">Available: ₹0.41</div>
+    <input placeholder="Enter amount">
+    <div class="btn gray">Withdraw</div>
+    <div class="btn" onclick="show('home')">Back</div>
+</div>
+
+<div class="container hidden" id="game">
+    <h2>WinGo (Demo)</h2>
+
+    <div class="game-grid">
+        <div class="ball violet">0</div>
+        <div class="ball green">1</div>
+        <div class="ball red">2</div>
+        <div class="ball green">3</div>
+        <div class="ball red">4</div>
+        <div class="ball violet">5</div>
+        <div class="ball red">6</div>
+        <div class="ball green">7</div>
+        <div class="ball red">8</div>
+        <div class="ball green">9</div>
+    </div>
+
+    <div class="btn gray" onclick="show('home')">Exit Game</div>
+</div>
+
+<div class="nav">
+    <div onclick="show('home')">Home</div>
+    <div onclick="show('deposit')">Deposit</div>
+    <div onclick="show('withdraw')">Withdraw</div>
+    <div onclick="show('game')">Game</div>
+</div>
+
+<script>
+function show(id){
+    document.querySelectorAll('.container').forEach(d=>d.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+</script>
+
+</body>
+</html>
