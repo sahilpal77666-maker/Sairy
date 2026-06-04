@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jalwa Game - Premium Edition</title>
+    <style>
+        :root {
+            --bg-dark: #060b19;
+            --bg-card: #101a30;
+            --bg-input: #172442;
+            --text-main: #ffffff;
+            --text-muted: #7c8ba1;
+            --primary: #00e5ff;
+            --green: #22c55e;
+            --violet: #9333ea;
+            --red: #ef4444;
+            --gold: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background: radial-gradient(circle at top, #112240 0%, #060b19 100%);
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 420px;
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            position: relative;
+            padding-bottom: 70px;
+            box-sizing: border-box;
+        }
+
+        .screen { display: none; padding: 15px; }
+        .screen.active { display: block; }
+
+        /* Login & Register Screen Styling */
+        .login-header { text-align: center; padding: 40px 0 20px; }
+        .login-header h1 { font-size: 28px; color: #fff; margin: 0; font-style: italic; letter-spacing: 1px; }
+        .login-header span { color: var(--primary); }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 14px; }
+        .input-group input {
+            width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #1e293b;
+            background-color: var(--bg-input); color: #fff; box-sizing: border-box; font-size: 16px;
+        }
+        .btn-login {
+            width: 100%; padding: 14px; background: linear-gradient(90deg, #00b4d8, #0077b6);
+            border: none; border-radius: 25px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px;
+        }
+        .auth-link {
+            text-align: center; margin-top: 15px; color: var(--text-muted); font-size: 14px; cursor: pointer;
+        }
+        .auth-link span { color: var(--primary); font-weight: bold; }
+
+        /* Game Screen Styling */
+        .wallet-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0d1b3e 100%);
+            padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .balance-title { font-size: 14px; color: var(--text-muted); }
+        .balance-amount { font-size: 28px; font-weight: bold; margin: 5px 0; color: #fff; }
+        
+        .game-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .gtab { flex: 1; padding: 10px; background: var(--bg-card); border-radius: 8px; text-align: center; font-size: 12px; cursor: pointer; border: 1px solid #1e293b; color: var(--text-muted); }
+        .gtab.active { background: linear-gradient(180deg, #00f5d4 0%, #00b4d8 100%); color: #000; font-weight: bold; }
+
+        .timer-row {
+            display: flex; justify-content: space-between; background: var(--bg-card);
+            padding: 15px; border-radius: 12px; margin-bottom: 15px; align-items: center;
+        }
+        .time-box { display: flex; gap: 4px; font-size: 22px; font-weight: bold; color: var(--primary); }
+
+        .color-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
+        .c-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; font-size: 16px; }
+        .btn-g { background: var(--green); }
+        .btn-v { background: var(--violet); }
+        .btn-r { background: var(--red); }
+
+        .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
+        .num-ball {
+            aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 16px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .size-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .s-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; font-size: 16px; }
+        .btn-big { background: var(--gold); }
+        .btn-small { background: #3b82f6; }
+
+        /* History Table */
+        .history-section { background: var(--bg-card); border-radius: 12px; padding: 10px; margin-top: 15px;}
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1e293b; }
+        th { color: var(--text-muted); }
+        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
+
+        /* Wallet & Deposit Channel UI */
+        .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .channel-box { background: var(--bg-card); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #1e293b; cursor: pointer; }
+        .channel-box.active { border-color: var(--primary); background: rgba(0, 229, 255, 0.1); }
+        
+        .amount-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .amt-box { background: var(--bg-card); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; border: 1px solid #1e293b; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 420px; height: 60px;
+            background-color: #0c1326; display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid #1e293b; z-index: 99;
+        }
+        .nav-item { color: var(--text-muted); font-size: 12px; cursor: pointer; text-align: center; flex: 1; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+
+        /* Popups Common */
+        .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; }
+        .popup-content { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-card); padding: 25px; border-radius: 15px; width: 85%; max-width: 340px; z-index: 101; text-align: center; border: 1px solid #1e293b; }
+        .qr-frame { width: 180px; height: 180px; background: white; margin: 15px auto; padding: 10px; border-radius: 10px; }
+        .qr-frame img { width: 100%; height: 100%; }
+
+        /* ADVANCE BETTING BOTTOM SHEET POPUP */
+        .bet-sheet {
+            display: none; position: fixed; bottom: 0; width: 100%; max-width: 420px;
+            background: #0f172a; border-top-left-radius: 20px; border-top-right-radius: 20px;
+            z-index: 150; box-sizing: border-box; overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .sheet-header {
+            background: #eab308; padding: 15px; text-align: center; color: white; font-weight: bold;
+            position: relative; clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            padding-bottom: 25px;
+        }
+        .sheet-selection-box {
+            background: white; color: black; padding: 6px 20px; display: inline-block;
+            border-radius: 4px; margin-top: 8px; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .sheet-body { padding: 20px 15px; }
+        .sheet-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sheet-row label { color: var(--text-muted); font-size: 15px; }
+        
+        .tag-group { display: flex; gap: 8px; }
+        .tag-item {
+            background: #1e293b; color: #94a3b8; padding: 6px 14px; border-radius: 4px;
+            font-size: 13px; font-weight: bold; cursor: pointer; min-width: 35px; text-align: center;
+        }
+        .tag-item.active { background: #eab308; color: white; }
+
+        .qty-box { display: flex; align-items: center; background: #090d16; border-radius: 4px; overflow: hidden; }
+        .qty-btn { background: #f59e0b; color: white; border: none; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .qty-val { width: 45px; text-align: center; color: white; font-weight: bold; }
+
+        .rules-row { display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 12px; margin-top: 10px; margin-bottom: 20px; text-align: left; }
+        .rules-row input { accent-color: #22c55e; width: 16px; height: 16px; cursor: pointer; }
+
+        .sheet-footer { display: flex; width: 100%; height: 50px; }
+        .footer-btn-cancel { background: #1e293b; color: #94a3b8; flex: 1; border: none; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .footer-btn-confirm { background: #eab308; color: white; flex: 2; border: none; font-weight: bold; cursor: pointer; font-size: 15px; }
+
+        /* Fake Live Ads Bar Styles */
+        .live-ads-box {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px dashed var(--gold);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gold);
+        }
+        .live-ads-content {
+            white-space: nowrap;
+            display: inline-block;
+            animation: textMarquee 15s linear infinite;
+            width: 100%;
+        }
+        @keyframes textMarquee {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+
+        <!-- SCREEN 1: LOGIN -->
+        <div id="screen-login" class="screen active">
+            <div class="login-header">
+                <h1>Jalwa<span>.Game</span></h1>
+                <p style="color: var(--text-muted); font-size: 14px;">Please log in with your phone number</p>
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="text" id="login-phone" placeholder="Enter your phone number">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-pass" placeholder="Enter your password">
+            </div>
+            <button class="btn-login" onclick="performLogin()">Log in</button>
+            <div class="auth-link" onclick="switchAuthScreen('screen-register')">
+                Don't have an account? <span>Register now</span>
+            </div>
+            <div class="auth-link" style="color: var(--gold);" onclick="switchAuthScreen('screen-forgot')">
+                Forgot Password? <span>Reset via OTP</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 1.2: FORGOT PASSWORD WITH SIMULATED OTP -->
+        <div id="screen-forgot" class="screen">
+            <div class="login-header">
+                <h1>Reset<span>.Password</span></h1>
+                <p style="color: var(--text-muted); font-size: 14px;">Secure simulation recovery dashboard</p>
+            </div>
+            
+            <!-- Forgot Password Stage 1 -->
+            <div id="forgot-stage-1">
+                <div class="input-group">
+                    <label>Registered Phone Number</label>
+                    <input type="text" id="forgot-phone" placeholder="Enter 10 digit phone number">
+                </div>
+                <button class="btn-login" style="background: linear-gradient(90deg, #f59e0b, #d97706);" onclick="sendForgotOTP()">Request Verification OTP</button>
+            </div>
+
+            <!-- Forgot Password Stage 2 -->
+            <div id="forgot-stage-2" style="display: none;">
+                <p style="color: var(--green); font-size: 13px; text-align: center; font-weight: bold; margin-bottom: 15px;">📩 OTP verification code simulated successfully!</p>
+                <div class="input-group">
+                    <label>Enter 4-Digit OTP</label>
+                    <input type="number" id="forgot-otp" placeholder="Enter verification OTP">
+                    <span id="otp-timer-lbl" style="font-size: 12px; color: var(--text-muted); display: block; margin-top: 6px;"></span>
+                </div>
+                <div class="input-group">
+                    <label>Create New Password</label>
+                    <input type="password" id="forgot-new-pass" placeholder="Create new strong password">
+                </div>
+                <button class="btn-login" style="background: linear-gradient(90deg, #22c55e, #10b981);" onclick="verifyOTPAndChangePassword()">Verify & Update Password</button>
+                <button class="btn-login" style="background: #334155; margin-top: 10px;" id="btn-resend-otp" onclick="resendForgotOTP()" disabled>Resend OTP</button>
+            </div>
+
+            <div class="auth-link" onclick="switchAuthScreen('screen-login')">
+                Back to <span>Log in</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 1.5: REGISTER -->
+        <div id="screen-register" class="screen">
+            <div class="login-header">
+                <h1>Jalwa<span>.Game</span></h1>
+                <p style="color: var(--text-muted); font-size: 14px;">Create a new account</p>
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="text" id="reg-phone" placeholder="Enter phone number">
+            </div>
+            <div class="input-group">
+                <label>Create Password</label>
+                <input type="password" id="reg-pass" placeholder="Create a strong password">
+            </div>
+            <div class="input-group">
+                <label>Invite Code (Optional)</label>
+                <input type="text" id="reg-invite" placeholder="Enter invitation code">
+            </div>
+            <button class="btn-login" style="background: linear-gradient(90deg, #22c55e, #10b981);" onclick="performRegister()">Register</button>
+            <div class="auth-link" onclick="switchAuthScreen('screen-login')">
+                Already have an account? <span>Log in</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAME HOME -->
+        <div id="screen-game" class="screen">
+            <!-- 🌟 LIVE ADS BANNER -->
+            <div class="live-ads-box">
+                <div class="live-ads-content" id="live-ads-text">🔥 Loading recent winners log...</div>
+            </div>
+
+            <div class="wallet-card">
+                <div class="balance-title">Available balance</div>
+                <div class="balance-amount">₹<span id="game-balance">0.00</span></div>
+                <div style="display:flex; gap: 10px; margin-top: 10px;">
+                    <button class="c-btn btn-g" style="padding: 8px;" onclick="switchScreen('screen-deposit')">Deposit</button>
+                    <button class="c-btn btn-r" style="padding: 8px;" onclick="switchScreen('screen-withdraw')">Withdraw</button>
+                </div>
+            </div>
+
+            <div class="game-tabs">
+                <div class="gtab active">WinGo 30sec</div>
+                <div class="gtab">WinGo 1 Min</div>
+                <div class="gtab">WinGo 3 Min</div>
+            </div>
+
+            <div class="timer-row">
+                <div>
+                    <span style="font-size:12px; color:var(--text-muted); display:block;">Period</span>
+                    <strong id="period-id" style="font-size:15px;">2026060410001</strong>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size:12px; color:var(--text-muted); display:block;">Time remaining</span>
+                    <div class="time-box">00:<span id="timer-sec">30</span></div>
+                </div>
+            </div>
+
+            <div class="color-buttons">
+                <button class="c-btn btn-g" onclick="openBetSheet('Green')">Green</button>
+                <button class="c-btn btn-v" onclick="openBetSheet('Violet')">Violet</button>
+                <button class="c-btn btn-r" onclick="openBetSheet('Red')">Red</button>
+            </div>
+
+            <div class="number-grid" id="num-grid-container"></div>
+
+            <div class="size-buttons">
+                <button class="s-btn btn-big" onclick="openBetSheet('Big')">Big</button>
+                <button class="s-btn btn-small" onclick="openBetSheet('Small')">Small</button>
+            </div>
+
+            <div class="history-section">
+                <h4 style="margin: 5px 0; text-align: left;">Game History</h4>
+                <table>
+                    <thead>
+                        <tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr>
+                    </thead>
+                    <tbody id="history-rows"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: DEPOSIT -->
+        <div id="screen-deposit" class="screen">
+            <h3 style="text-align:left; color: var(--primary);">Deposit Money</h3>
+            <div class="wallet-card" style="background:#111c35;">
+                <span class="balance-title">Current Balance</span>
+                <div class="balance-amount" style="font-size:22px;">₹<span id="deposit-balance">0.00</span></div>
+            </div>
+
+            <h4 style="text-align:left; margin-bottom:10px;">Select Channel</h4>
+            <div class="channel-grid">
+                <div class="channel-box active">Zip-Pay<br><span style="font-size:10px; color:var(--green)">+3% Bonus</span></div>
+                <div class="channel-box">V-Pay<br><span style="font-size:10px; color:var(--text-muted)">Standard</span></div>
+            </div>
+
+            <h4 style="text-align:left; margin-bottom:10px;">Deposit Amount</h4>
+            <div class="amount-grid">
+                <div class="amt-box" onclick="setDepositAmt(100)">₹100</div>
+                <div class="amt-box" onclick="setDepositAmt(500)">₹500</div>
+                <div class="amt-box" onclick="setDepositAmt(1000)">₹1K</div>
+                <div class="amt-box" onclick="setDepositAmt(5000)">₹5K</div>
+                <div class="amt-box" onclick="setDepositAmt(10000)">₹10K</div>
+                <div class="amt-box" onclick="setDepositAmt(20000)">₹20K</div>
+            </div>
+
+            <input type="number" id="custom-deposit-amt" placeholder="Enter amount (100 - 50000)" style="width:100%; padding:14px; background:var(--bg-input); border:1px solid #1e293b; border-radius:8px; color:white; font-size:16px; box-sizing:border-box; margin-bottom:20px;">
+
+            <button class="btn-login" style="background:var(--green);" onclick="triggerScannerPopup()">Deposit Now</button>
+
+            <!-- DEPOSIT HISTORY LOGS -->
+            <div class="history-section" style="margin-top:25px;">
+                <h4 style="margin: 5px 0; text-align: left;">Deposit History</h4>
+                <table>
+                    <thead>
+                        <tr><th>UTR / ID</th><th>Amount</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="deposit-history-rows">
+                        <tr><td colspan="3" style="color:var(--text-muted)">No recent deposit logs found</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: WITHDRAW -->
+        <div id="screen-withdraw" class="screen">
+            <h3 style="text-align:left; color: var(--red);">Withdraw Money</h3>
+            <p style="font-size: 12px; color: var(--gold); margin-top: -10px; text-align: left; font-weight: bold;">⚠️ Paytm & PhonePe Only supported for instant execution channels.</p>
+            
+            <!-- Method Tabs Picker -->
+            <div class="game-tabs" style="margin-bottom: 20px;">
+                <div class="gtab active" id="wit-tab-bank" onclick="switchWithdrawView('bank')">Bank Transfer</div>
+                <div class="gtab" id="wit-tab-upi" onclick="switchWithdrawView('upi')">UPI Channel</div>
+            </div>
+
+            <div class="input-group">
+                <label>Withdraw Amount (Minimum ₹100)</label>
+                <input type="number" id="wit-amount" placeholder="Enter withdrawal amount">
+            </div>
+
+            <!-- Form Part A: Bank Option Fields -->
+            <div id="wit-bank-wrapper">
+                <div class="input-group">
+                    <label>Bank Name</label>
+                    <input type="text" id="wit-bank" placeholder="e.g. SBI, HDFC">
+                </div>
+                <div class="input-group">
+                    <label>Account Number</label>
+                    <input type="text" id="wit-acc" placeholder="Enter Account Number">
+                </div>
+                <div class="input-group">
+                    <label>IFSC Code</label>
+                    <input type="text" id="wit-ifsc" placeholder="Enter IFSC Code">
+                </div>
+            </div>
+
+            <!-- Form Part B: UPI Options Fields -->
+            <div id="wit-upi-wrapper" style="display: none;">
+                <div class="input-group">
+                    <label>UPI ID Address (Paytm/PhonePe handle preferred)</label>
+                    <input type="text" id="wit-upi-id" placeholder="example@paytm / example@ybl">
+                </div>
+            </div>
+
+            <button class="btn-login" style="background:var(--red);" onclick="submitWithdrawReq()">Submit Withdrawal</button>
+
+            <!-- WITHDRAWAL HISTORY LOGS -->
+            <div class="history-section" style="margin-top:25px;">
+                <h4 style="margin: 5px 0; text-align: left;">Withdrawal History</h4>
+                <table>
+                    <thead>
+                        <tr><th>Target Method</th><th>Amount</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="withdraw-history-rows">
+                        <tr><td colspan="3" style="color:var(--text-muted)">No recent withdrawal requests found</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV BAR -->
+        <div class="bottom-nav" id="main-nav" style="display:none;">
+            <div class="nav-item active" onclick="switchScreen('screen-game')">🏠<br>Home</div>
+            <div class="nav-item" onclick="switchScreen('screen-deposit')">💳<br>Deposit</div>
+            <div class="nav-item" onclick="switchScreen('screen-withdraw')">🏦<br>Withdraw</div>
+        </div>
+
+    </div>
+
+    <!-- ADVANCED BETTING MODAL SHEET -->
+    <div class="popup-overlay" id="bet-sheet-overlay" onclick="closeBetSheet()"></div>
+    <div class="bet-sheet" id="bet-multiplier-sheet">
+        <div class="sheet-header">
+            <div>WinGo 30sec</div>
+            <div class="sheet-selection-box" id="sheet-target-label">Select Big</div>
+        </div>
+        <div class="sheet-body">
+            <div class="sheet-row">
+                <label>Balance</label>
+                <div class="tag-group" id="balance-tags">
+                    <div class="tag-item active" onclick="changeBaseAmount(1, this)">1</div>
+                    <div class="tag-item" onclick="changeBaseAmount(10, this)">10</div>
+                    <div class="tag-item" onclick="changeBaseAmount(100, this)">100</div>
+                    <div class="tag-item" onclick="changeBaseAmount(1000, this)">1000</div>
+                </div>
+            </div>
+
+            <div class="sheet-row">
+                <label>Quantity</label>
+                <div class="qty-box">
+                    <button class="qty-btn" onclick="alterQty(-1)">-</button>
+                    <div class="qty-val" id="qty-counter-display">1</div>
+                    <button class="qty-btn" onclick="alterQty(1)">+</button>
+                </div>
+            </div>
+
+            <div class="sheet-row">
+                <label>Multiplier</label>
+                <div class="tag-group" id="multiplier-tags">
+                    <div class="tag-item active" onclick="changeXMultiplier(1, this)">X1</div>
+                    <div class="tag-item" onclick="changeXMultiplier(5, this)">X5</div>
+                    <div class="tag-item" onclick="changeXMultiplier(10, this)">X10</div>
+                    <div class="tag-item" onclick="changeXMultiplier(20, this)">X20</div>
+                    <div class="tag-item" onclick="changeXMultiplier(50, this)">X50</div>
+                    <div class="tag-item" onclick="changeXMultiplier(100, this)">X100</div>
+                </div>
+            </div>
+
+            <div class="rules-row">
+                <input type="checkbox" id="rules-checkbox" checked>
+                <span>I agree <span style="color:#f59e0b;">≪Pre-sale rules≫</span></span>
+            </div>
+        </div>
+        <div class="sheet-footer">
+            <button class="footer-btn-cancel" onclick="closeBetSheet()">Cancel</button>
+            <button class="footer-btn-confirm" id="footer-total-btn" onclick="confirmFinalBet()">Total amount ₹1.00</button>
+        </div>
+    </div>
+
+    <!-- SCANNER POPUP WITH UTR OPTION -->
+    <div class="popup-overlay" id="qr-overlay">
+        <div class="popup-content">
+            <h3>Scan QR Code to Pay</h3>
+            <div class="qr-frame" id="popup-qr-container">
+                <p style="color:black; font-size:12px; margin-top:60px;">No QR Configured</p>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted)">Paise transfer karne ke baad neeche 12-digit UTR No. daalein.</p>
+            
+            <!-- 🌟 UTR INPUT FIELD ADDED HERE -->
+            <input type="text" id="deposit-utr" placeholder="Enter 12-Digit UTR / Txn ID" maxlength="12" style="width:100%; padding:12px; background:var(--bg-input); border:1px solid #1e293b; border-radius:8px; color:white; font-size:14px; box-sizing:border-box; margin-bottom:15px; text-align:center;">
+
+            <button class="c-btn btn-g" style="width:100%; margin-bottom:8px;" onclick="confirmDepositReq()">I Have Paid</button>
+            <button class="c-btn btn-r" style="width:100%;" onclick="document.getElementById('qr-overlay').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Setup State
+        let currentUserPhone = localStorage.getItem('j_user_phone') || '9876543210';
+        let balance = 0; 
+        let currentPeriod = 2026060410001;
+        
+        // Multiplier Sheet State Variables
+        let activeBetType = null;
+        let currentBaseAmount = 1;
+        let currentQuantity = 1;
+        let currentXMultiplier = 1;
+        let calculatedTotalBet = 1;
+        let currentWithdrawMode = 'bank'; // 'bank' or 'upi'
+
+        // OTP SIMULATOR CONTEXT STATE
+        let generatedResetOTP = null;
+        let otpTimerObj = null;
+        let otpCountdownVal = 60;
+
+        const numColors = {
+            0: 'linear-gradient(90deg, #9333ea 50%, #ef4444 50%)',
+            1: '#22c55e', 2: '#ef4444', 3: '#22c55e', 4: '#ef4444',
+            5: 'linear-gradient(90deg, #9333ea 50%, #22c55e 50%)',
+            6: '#ef4444', 7: '#22c55e', 8: '#ef4444', 9: '#22c55e'
+        };
+
+        function updateBalanceUI() {
+            document.getElementById('game-balance').innerText = balance.toFixed(2);
+            document.getElementById('deposit-balance').innerText = balance.toFixed(2);
+            
+            let balances = JSON.parse(localStorage.getItem('j_user_balances')) || {};
+            balances[currentUserPhone] = balance;
+            localStorage.setItem('j_user_balances', JSON.stringify(balances));
+        }
+
+        // Generate 0-9 Balls
+        const grid = document.getElementById('num-grid-container');
+        for(let i=0; i<=9; i++) {
+            let ball = document.createElement('div');
+            ball.className = 'num-ball';
+            if(typeof numColors[i] === 'string' && numColors[i].includes('gradient')) {
+                ball.style.background = numColors[i];
+            } else {
+                ball.style.backgroundColor = numColors[i];
+            }
+            ball.innerText = i;
+            ball.onclick = () => openBetSheet(i);
+            grid.appendChild(ball);
+        }
+
+        // --- ACCOUNT WISE AUTHENTICATION LOGIC ---
+        if(!localStorage.getItem('j_users')) {
+            localStorage.setItem('j_users', JSON.stringify({ '9876543210': '123456' }));
+            let initialBalances = {};
+            initialBalances['9876543210'] = 1000.00;
+            localStorage.setItem('j_user_balances', JSON.stringify(initialBalances));
+        }
+
+        function switchAuthScreen(id) {
+            document.getElementById('screen-login').classList.remove('active');
+            document.getElementById('screen-register').classList.remove('active');
+            document.getElementById('screen-forgot').classList.remove('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function isUserBlocked(phone) {
+            let blocks = JSON.parse(localStorage.getItem('j_blocked_users')) || {};
+            return blocks[phone] === true;
+        }
+
+        function proceedToApp() {
+            if(isUserBlocked(currentUserPhone)) {
+                alert("❌ This account is BLOCKED by admin!");
+                switchAuthScreen('screen-login');
+                return;
+            }
+
+            document.getElementById('screen-login').classList.remove('active');
+            document.getElementById('screen-register').classList.remove('active');
+            document.getElementById('screen-forgot').classList.remove('active');
+            document.getElementById('screen-game').classList.add('active');
+            document.getElementById('main-nav').style.display = 'flex';
+            
+            let balances = JSON.parse(localStorage.getItem('j_user_balances')) || {};
+            if (balances[currentUserPhone] === undefined) {
+                balances[currentUserPhone] = 500.00; 
+            }
+            balance = balances[currentUserPhone];
+
+            updateBalanceUI();
+            loadHistory();
+            initHistoryTables();
+            launchLiveAdsSequence();
+        }
+
+        function performLogin() {
+            let phone = document.getElementById('login-phone').value.trim();
+            let pass = document.getElementById('login-pass').value.trim();
+            
+            if(!phone || !pass) {
+                return alert("⚠️ Kripya Phone Number aur Password dono daalein!");
+            }
+
+            let users = JSON.parse(localStorage.getItem('j_users')) || {};
+
+            if(users[phone] && users[phone] === pass) {
+                if(isUserBlocked(phone)) {
+                    return alert("❌ This account is BLOCKED by admin!");
+                }
+                currentUserPhone = phone;
+                localStorage.setItem('j_user_phone', phone);
+                proceedToApp();
+            } else {
+                alert("❌ Galat Phone Number ya Password!");
+            }
+        }
+
+        function performRegister() {
+            let phone = document.getElementById('reg-phone').value.trim();
+            let pass = document.getElementById('reg-pass').value.trim();
+            
+            if(!phone || !pass) {
+                return alert("⚠️ Kripya Phone Number aur Password daalein!");
+            }
+            if(phone.length < 10) {
+                return alert("⚠️ Phone number kam se kam 10 digits ka hona chahiye!");
+            }
+            if(pass.length < 6) {
+                return alert("⚠️ Password kam se kam 6 characters ka hona chahiye!");
+            }
+            
+            let users = JSON.parse(localStorage.getItem('j_users')) || {};
+            
+            if(users[phone]) {
+                return alert("❌ Yeh number pehle se registered hai!");
+            }
+            
+            users[phone] = pass;
+            localStorage.setItem('j_users', JSON.stringify(users));
+            
+            currentUserPhone = phone;
+            localStorage.setItem('j_user_phone', phone);
+            
+            alert("✅ Account Successfully Created!");
+            proceedToApp();
+        }
+
+        // --- FORGOT PASSWORD SMS OTP SIMULATION LOGIC ---
+        function sendForgotOTP() {
+            let phone = document.getElementById('forgot-phone').value.trim();
+            if(phone.length < 10) return alert("❌ Please input valid 10-digit number!");
+
+            let users = JSON.parse(localStorage.getItem('j_users')) || {};
+            if(!users[phone]) {
+                return alert("❌ This phone number is not registered in our local server registry!");
+            }
+
+            generatedResetOTP = Math.floor(1000 + Math.random() * 9000);
+            
+            alert(`📲 [SMS GATEWAY SIMULATOR POPUP]\n----------------------------------------\nTo Device: +91 ${phone}\nMessage: Your OTP verification code to reset premium Jalwa Game credentials is: ${generatedResetOTP}\nValid for 60 seconds.`);
+            
+            document.getElementById('forgot-stage-1').style.display = 'none';
+            document.getElementById('forgot-stage-2').style.display = 'block';
+            startForgotOTPTicker();
+        }
+
+        function startForgotOTPTicker() {
+            otpCountdownVal = 60;
+            document.getElementById('btn-resend-otp').disabled = true;
+            document.getElementById('btn-resend-otp').style.opacity = '0.5';
+
+            clearInterval(otpTimerObj);
+            otpTimerObj = setInterval(() => {
+                otpCountdownVal--;
+                document.getElementById('otp-timer-lbl').innerText = `Resend available in ${otpCountdownVal} seconds`;
+                
+                if(otpCountdownVal <= 0) {
+                    clearInterval(otpTimerObj);
+                    document.getElementById('otp-timer-lbl').innerText = "OTP expired. You can tap resend button now.";
+                    document.getElementById('btn-resend-otp').disabled = false;
+                    document.getElementById('btn-resend-otp').style.opacity = '1';
+                }
+            }, 1000);
+        }
+
+        function resendForgotOTP() {
+            generatedResetOTP = Math.floor(1000 + Math.random() * 9000);
+            alert(`🔄 [RESEND SMS SIMULATION]\nNew OTP code dispatched to terminal: ${generatedResetOTP}`);
+            startForgotOTPTicker();
+        }
+
+        function verifyOTPAndChangePassword() {
+            let enteredOTP = document.getElementById('forgot-otp').value.trim();
+            let newPass = document.getElementById('forgot-new-pass').value.trim();
+            let phone = document.getElementById('forgot-phone').value.trim();
+
+            if(!enteredOTP) return alert("❌ Input verification token code!");
+            if(newPass.length < 6) return alert("❌ New safety password must be 6+ length string!");
+
+            if(enteredOTP == generatedResetOTP) {
+                let users = JSON.parse(localStorage.getItem('j_users')) || {};
+                users[phone] = newPass;
+                localStorage.setItem('j_users', JSON.stringify(users));
+
+                alert("🎉 Success! Credentials overwritten successfully. Proceeding back to safe authorization screen.");
+                clearInterval(otpTimerObj);
+                
+                // Clear fields reset
+                document.getElementById('forgot-phone').value = '';
+                document.getElementById('forgot-otp').value = '';
+                document.getElementById('forgot-new-pass').value = '';
+                document.getElementById('forgot-stage-1').style.display = 'block';
+                document.getElementById('forgot-stage-2').style.display = 'none';
+                switchAuthScreen('screen-login');
+            } else {
+                alert("❌ Verification token/OTP mismatch mismatch! Try again.");
+            }
+        }
+
+        // --- DEPOSIT AMOUNT PRESET HOOK ---
+        function setDepositAmt(val) {
+            document.getElementById('custom-deposit-amt').value = val;
+        }
+
+        function triggerScannerPopup() {
+            let amt = parseFloat(document.getElementById('custom-deposit-amt').value);
+            if(!amt || amt < 100) return alert("❌ Minimum standard deposit limit channel is ₹100!");
+            document.getElementById('qr-overlay').style.display = 'block';
+        }
+
+        function confirmDepositReq() {
+            let utr = document.getElementById('deposit-utr').value.trim();
+            let amt = parseFloat(document.getElementById('custom-deposit-amt').value);
+            
+            if(utr.length < 12) return alert("❌ Input valid 12-digit payment transaction verification UTR ID!");
+            
+            // Add balance immediately for simulated UI behavior
+            balance += amt;
+            updateBalanceUI();
+
+            // Store history log
+            let logs = JSON.parse(localStorage.getItem(`j_dep_logs_${currentUserPhone}`)) || [];
+            logs.unshift({ id: utr, amount: amt, status: 'Success' });
+            localStorage.setItem(`j_dep_logs_${currentUserPhone}`, JSON.stringify(logs));
+            
+            initHistoryTables();
+            document.getElementById('qr-overlay').style.display = 'none';
+            document.getElementById('deposit-utr').value = '';
+            alert("✅ Deposit receipt logged onto system dashboard! Added funds.");
+        }
+
+        // --- WITHDRAW METHOD CONDITIONAL FIELDS VIEWER ---
+        function switchWithdrawView(mode) {
+            currentWithdrawMode = mode;
+            document.getElementById('wit-tab-bank').classList.remove('active');
+            document.getElementById('wit-tab-upi').classList.remove('active');
+            
+            if(mode === 'bank') {
+                document.getElementById('wit-tab-bank').classList.add('active');
+                document.getElementById('wit-bank-wrapper').style.display = 'block';
+                document.getElementById('wit-upi-wrapper').style.display = 'none';
+            } else {
+                document.getElementById('wit-tab-upi').classList.add('active');
+                document.getElementById('wit-bank-wrapper').style.display = 'none';
+                document.getElementById('wit-upi-wrapper').style.display = 'block';
+            }
+        }
+
+        function submitWithdrawReq() {
+            let amt = parseFloat(document.getElementById('wit-amount').value);
+            if(!amt || amt < 100) {
+                return alert("❌ Security validation failed! Minimum manual channel withdrawal allowed is ₹100.");
+            }
+            if(balance < amt) {
+                return alert("❌ Insufficient vault balance available to handle withdrawal dispatch execution!");
+            }
+
+            let targetMethodName = "";
+            if(currentWithdrawMode === 'bank') {
+                let bName = document.getElementById('wit-bank').value.trim();
+                let accNum = document.getElementById('wit-acc').value.trim();
+                if(!bName || !accNum) return alert("❌ Fill essential bank system tracking variables!");
+                targetMethodName = `Bank (${bName})`;
+            } else {
+                let upiValue = document.getElementById('wit-upi-id').value.trim();
+                if(!upiValue) return alert("❌ Please enter clear valid UPI address string!");
+                targetMethodName = `UPI / Wallet`;
+            }
+
+            // Deduct from current instance
+            balance -= amt;
+            updateBalanceUI();
+
+            // Store transaction history logs
+            let logs = JSON.parse(localStorage.getItem(`j_wit_logs_${currentUserPhone}`)) || [];
+            logs.unshift({ method: targetMethodName, amount: amt, status: 'Processing' });
+            localStorage.setItem(`j_wit_logs_${currentUserPhone}`, JSON.stringify(logs));
+
+            initHistoryTables();
+            document.getElementById('wit-amount').value = '';
+            alert("🚀 Withdrawal processing payload dispatched successfully to network accounts team!");
+        }
+
+        // Render logs data
+        function initHistoryTables() {
+            // Deposit loop
+            let dLogs = JSON.parse(localStorage.getItem(`j_dep_logs_${currentUserPhone}`)) || [];
+            let dHtml = dLogs.map(l => `<tr><td>${l.id}</td><td style="color:var(--green)">+₹${l.amount}</td><td>${l.status}</td></tr>`).join('');
+            document.getElementById('deposit-history-rows').innerHTML = dHtml || `<tr><td colspan="3" style="color:var(--text-muted)">No recent deposit logs found</td></tr>`;
+
+            // Withdraw loop
+            let wLogs = JSON.parse(localStorage.getItem(`j_wit_logs_${currentUserPhone}`)) || [];
+            let wHtml = wLogs.map(l => `<tr><td>${l.method}</td><td style="color:var(--red)">-₹${l.amount}</td><td style="color:var(--gold)">${l.status}</td></tr>`).join('');
+            document.getElementById('withdraw-history-rows').innerHTML = wHtml || `<tr><td colspan="3" style="color:var(--text-muted)">No recent withdrawal requests found</td></tr>`;
+        }
+
+        // --- FAKE LIVE ADS SEQUENCE GENERATOR ---
+        function launchLiveAdsSequence() {
+            const listNames = ['Rahul', 'Amit', 'Priya', 'Deepak', 'Sanjay', 'Vikram', 'Neha', 'Kabir', 'Rajesh', 'Ananya'];
+            const listAmts = [240, 500, 1200, 850, 2400, 150, 480, 960, 5000, 310];
+            const listOptions = ['Red', 'Green', 'Big', 'Small', 'Number 7', 'Number 3'];
+            
+            setInterval(() => {
+                let randName = listNames[Math.floor(Math.random() * listNames.length)];
+                let randAmt = listAmts[Math.floor(Math.random() * listAmts.length)];
+                let randOpt = listOptions[Math.floor(Math.random() * listOptions.length)];
+                document.getElementById('live-ads-text').innerText = `🎉 User ${randName} has won ₹${randAmt}.00 prediction target on ${randOpt}!`;
+            }, 3500);
+        }
+
+        function switchScreen(id) {
+            if(isUserBlocked(currentUserPhone)) {
+                alert("Your account is BLOCKED!");
+                window.location.reload();
+                return;
+            }
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            let navItems = document.querySelectorAll('.nav-item');
+            if(id === 'screen-game') { navItems[0].classList.add('active'); navItems[1].classList.remove('active'); navItems[2].classList.remove('active'); }
+            if(id === 'screen-deposit') { navItems[0].classList.remove('active'); navItems[1].classList.add('active'); navItems[2].classList.remove('active'); }
+            if(id === 'screen-withdraw') { navItems[0].classList.remove('active'); navItems[1].classList.remove('active'); navItems[2].classList.add('active'); }
+        }
+
+        // Timer System (30 Seconds Loop)
+        let timer = 30;
+        setInterval(() => {
+            if(document.getElementById('screen-game').classList.contains('active') && isUserBlocked(currentUserPhone)) {
+                alert("Account blocked!");
+                window.location.reload();
+            }
+            timer--;
+            if(timer < 0) {
+                timer = 30;
+                executeGameResult();
+            }
+            document.getElementById('timer-sec').innerText = timer < 10 ? '0' + timer : timer;
+        }, 1000);
+
+        function openBetSheet(type) {
+            if(isUserBlocked(currentUserPhone)) return alert("You are blocked!");
+            activeBetType = type;
+            
+            document.getElementById('sheet-target-label').innerText = `Select ${type}`;
+            currentBaseAmount = 1;
+            currentQuantity = 1;
+            currentXMultiplier = 1;
+            
+            document.querySelectorAll('#balance-tags .tag-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#balance-tags .tag-item')[0].classList.add('active');
+            
+            document.querySelectorAll('#multiplier-tags .tag-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#multiplier-tags .tag-item')[0].classList.add('active');
+            
+            document.getElementById('qty-counter-display').innerText = currentQuantity;
+            document.getElementById('rules-checkbox').checked = true;
+
+            recalculateTotalBetPrice();
+
+            document.getElementById('bet-sheet-overlay').style.display = 'block';
+            document.getElementById('bet-multiplier-sheet').style.display = 'block';
+        }
+
+        function closeBetSheet() {
+            document.getElementById('bet-sheet-overlay').style.display = 'none';
+            document.getElementById('bet-multiplier-sheet').style.display = 'none';
+        }
+
+        function changeBaseAmount(amount, element) {
+            document.querySelectorAll('#balance-tags .tag-item').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            currentBaseAmount = amount;
+            recalculateTotalBetPrice();
+        }
+
+        function alterQty(val) {
+            currentQuantity += val;
+            if(currentQuantity < 1) currentQuantity = 1;
+            document.getElementById('qty-counter-display').innerText = currentQuantity;
+            recalculateTotalBetPrice();
+        }
+
+        function changeXMultiplier(multiplier, element) {
+            document.querySelectorAll('#multiplier-tags .tag-item').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            currentXMultiplier = multiplier;
+            recalculateTotalBetPrice();
+        }
+
+        function recalculateTotalBetPrice() {
+            calculatedTotalBet = currentBaseAmount * currentQuantity * currentXMultiplier;
+            document.getElementById('footer-total-btn').innerText = `Total amount ₹${calculatedTotalBet}.00`;
+        }
+
+        function confirmFinalBet() {
+            if(!document.getElementById('rules-checkbox').checked) {
+                return alert("Please agree to the Pre-sale rules first!");
+            }
+            if(balance < calculatedTotalBet) {
+                return alert("Insufficient balance to place this bet!");
+            }
+
+            balance -= calculatedTotalBet;
+            updateBalanceUI();
+            
+            let userBets = JSON.parse(localStorage.getItem('j_active_bets')) || {};
+            userBets[currentUserPhone] = { type: activeBetType, value: calculatedTotalBet };
+            localStorage.setItem('j_active_bets', JSON.stringify(userBets));
+
+            alert(`Bet of ₹${calculatedTotalBet}.00 confirmed on ${activeBetType}!`);
+            closeBetSheet();
+        }
+
+        // --- 🌟 EXTENDED GAME RESULT LOGIC (FIXED TERMINATION BREAK) ---
+        function executeGameResult() {
+            let forced = localStorage.getItem('j_force');
+            let winNum;
+            
+            if(forced) {
+                winNum = parseInt(forced);
+                localStorage.removeItem('j_force');
+            } else {
+                winNum = Math.floor(Math.random() * 10);
+            }
+
+            let size = winNum >= 5 ? 'Big' : 'Small';
+            let color = (winNum === 0 || winNum === 5) ? 'Violet' : (winNum % 2 === 0 ? 'Red' : 'Green');
+
+            let userBets = JSON.parse(localStorage.getItem('j_active_bets')) || {};
+            let myBet = userBets[currentUserPhone];
+
+            if(myBet) {
+                let targetType = myBet.type;
+                let betStake = parseFloat(myBet.value);
+                let payoutRatio = 0;
+                let wonGame = false;
+
+                if (targetType === winNum) {
+                    payoutRatio = 9;
+                    wonGame = true;
+                } else if (targetType === size) {
+                    payoutRatio = 2;
+                    wonGame = true;
+                } else if (targetType === color) {
+                    payoutRatio = (color === 'Violet') ? 4.5 : 2;
+                    wonGame = true;
+                }
+
+                if (wonGame) {
+                    let totalPrizeMoney = betStake * payoutRatio;
+                    balance += totalPrizeMoney;
+                    updateBalanceUI();
+                    alert(`🎉 Payout Won! You received ₹${totalPrizeMoney.toFixed(2)} for Period ID ${currentPeriod}!`);
+                } else {
+                    alert(`❌ Result Outcome was Number: ${winNum} (${size} | ${color}). Hard Luck!`);
+                }
+
+                delete userBets[currentUserPhone];
+                localStorage.setItem('j_active_bets', JSON.stringify(userBets));
+            }
+
+            // Append game history node dynamically inside local view template state
+            let pickedDisplayBg = (winNum === 0 || winNum === 5) ? '#9333ea' : (winNum % 2 === 0 ? 'var(--red)' : 'var(--green)');
+            let appendHtml = `<tr>
+                <td>${currentPeriod}</td>
+                <td style="color:var(--primary); font-weight:bold;">${winNum}</td>
+                <td>${size}</td>
+                <td><span class="dot" style="background:${pickedDisplayBg}"></span> ${color}</td>
+            </tr>`;
+            
+            document.getElementById('history-rows').insertAdjacentHTML('afterbegin', appendHtml);
+            
+            // Advance period increment counter
+            currentPeriod += 1;
+            document.getElementById('period-id').innerText = currentPeriod;
+        }
+
+        function loadHistory() {
+            // Initial placeholder injection matching data nodes architecture configuration
+            let initialPeriodStub = currentPeriod - 1;
+            let mockMarkup = `<tr>
+                <td>${initialPeriodStub}</td>
+                <td style="color:var(--primary); font-weight:bold;">3</td>
+                <td>Small</td>
+                <td><span class="dot" style="background:var(--green)"></span> Green</td>
+            </tr>`;
+            document.getElementById('history-rows').innerHTML = mockMarkup;
+        }
+    </script>
+</body>
+</html>
