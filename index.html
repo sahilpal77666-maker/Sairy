@@ -3,738 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAHIL THE SYSTEM - Monarch Console</title>
+    <title>SAHIL THE SYSTEM - Ultra Pro Max Console</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 
         :root {
             --glow-cyan: #00f3ff;
             --glow-blue: #0066ff;
-            --dark-void: #020208;
-            --panel-alpha: rgba(6, 10, 22, 0.85);
+            --dark-void: #020206;
+            --panel-alpha: rgba(5, 9, 20, 0.92);
             --neon-red: #ff0055;
+            --neon-green: #00ff66;
+            --gold-star: #ffd700;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Share Tech Mono', monospace;
-            user-select: none;
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace; user-select: none;
         }
 
         body {
-            background-color: var(--dark-void);
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            padding: 15px;
+            background-color: var(--dark-void); color: #fff;
+            min-height: 100vh; overflow-x: hidden; padding: 15px;
         }
 
-        /* Hacker Background Matrix Canvas */
         #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.15;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.15;
         }
 
-        /* Scanline Overlay for Cyber Feel */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 9999;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-        }
+        .container { max-width: 1200px; margin: 0 auto; position: relative; }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* Header System Glitch Styling */
         header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-            padding-bottom: 15px;
-            position: relative;
+            text-align: center; margin-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 243, 255, 0.2); padding-bottom: 15px;
         }
 
         .main-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.8rem;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--glow-cyan), 0 0 20px var(--glow-blue);
-            animation: titlePulse 2s infinite alternate;
+            font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900;
+            letter-spacing: 8px; color: #fff;
+            text-shadow: 0 0 15px var(--glow-cyan), 0 0 30px var(--glow-blue);
         }
 
-        @keyframes titlePulse {
-            0% { text-shadow: 0 0 8px var(--glow-cyan), 0 0 15px var(--glow-blue); }
-            100% { text-shadow: 0 0 18px var(--glow-cyan), 0 0 35px var(--glow-blue); }
+        .screen { display: none; animation: bootAnimation 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+        .screen.active { display: grid !important; }
+
+        @keyframes bootAnimation {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Screen States */
-        .screen {
-            display: none;
-            animation: terminalBoot 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-        }
-
-        .screen.active {
-            display: grid !important;
-        }
-
-        @keyframes terminalBoot {
-            0% { opacity: 0; transform: scaleY(0.005) scaleX(0); }
-            50% { opacity: 0.8; transform: scaleY(0.005) scaleX(1); }
-            100% { opacity: 1; transform: scaleY(1) scaleX(1); }
-        }
-
-        /* Hacker Registration Box */
+        /* Access Terminal Box */
         .hacker-auth-box {
-            max-width: 550px;
-            margin: 50px auto;
-            background: var(--panel-alpha);
-            border: 2px solid var(--glow-cyan);
-            border-radius: 4px;
-            padding: 30px;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
-            position: relative;
+            max-width: 550px; margin: 60px auto; background: var(--panel-alpha);
+            border: 2px solid var(--glow-cyan); padding: 35px; border-radius: 6px;
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.25); position: relative;
         }
 
-        .hacker-auth-box::before {
-            content: '[INITIALIZING AWAKENING KEY]';
-            position: absolute;
-            top: -12px; left: 20px;
-            background: var(--dark-void);
-            padding: 0 10px;
-            color: var(--glow-cyan);
-            font-size: 0.85rem;
-        }
-
-        .field-group {
-            margin-bottom: 22px;
-        }
-
-        .field-group label {
-            display: block;
-            color: var(--glow-cyan);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
+        .field-group { margin-bottom: 22px; }
+        .field-group label { display: block; color: var(--glow-cyan); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;}
         .field-group input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            padding: 12px;
-            color: #fff;
-            font-size: 1.05rem;
-            border-radius: 3px;
-            outline: none;
-            transition: 0.3s;
+            width: 100%; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(0, 243, 255, 0.4);
+            padding: 12px; color: #fff; font-size: 1.1rem; outline: none;
         }
 
-        .field-group input:focus {
-            border-color: var(--glow-cyan);
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
-        }
-
-        /* Custom Hologram Terminal Button */
         .term-btn {
-            background: transparent;
-            color: var(--glow-cyan);
-            border: 1px solid var(--glow-cyan);
-            padding: 14px 25px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.2s;
+            background: transparent; color: var(--glow-cyan); border: 1px solid var(--glow-cyan);
+            padding: 14px 25px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 2px; transition: 0.2s;
         }
+        .term-btn:hover { background: rgba(0, 243, 255, 0.15); box-shadow: 0 0 25px rgba(0, 243, 255, 0.5); }
 
-        .term-btn:hover {
-            background: rgba(0, 243, 255, 0.15);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-            text-shadow: 0 0 8px #fff;
-        }
+        /* Dashboard Grid Setup */
+        .dashboard-layout { grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 950px) { .dashboard-layout { grid-template-columns: 400px 1fr; } }
 
-        /* Pro Dashboard Grid Layout */
-        .dashboard-layout {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        @media (min-width: 850px) {
-            .dashboard-layout {
-                grid-template-columns: 380px 1fr;
-            }
-        }
-
-        /* Tech Panels */
         .panel {
-            background: var(--panel-alpha);
-            border: 1px solid rgba(0, 38, 255, 0.4);
-            border-top: 3px solid var(--glow-blue);
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            position: relative;
+            background: var(--panel-alpha); border: 1px solid rgba(0, 102, 255, 0.25);
+            border-top: 4px solid var(--glow-blue); padding: 20px; position: relative;
+            border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
 
         .panel-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--glow-cyan);
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 6px;
+            font-family: 'Orbitron', sans-serif; color: var(--glow-cyan);
+            font-size: 1.2rem; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* Advanced Holographic ID Card */
-        .hollow-id-card {
-            background: linear-gradient(145deg, #070c18 0%, #02040a 100%);
-            border: 1px solid var(--glow-cyan);
-            padding: 20px;
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.1);
+        /* Premium Hologram Card */
+        .hollow-id-card { 
+            background: linear-gradient(135deg, #050b1a 0%, #010307 100%); 
+            border: 2px solid var(--glow-cyan); padding: 22px; position: relative; border-radius: 8px;
         }
-
         .hologram-viewport {
-            width: 110px;
-            height: 140px;
-            border: 1px solid var(--glow-cyan);
-            position: relative;
-            background: #000;
-            overflow: hidden;
-            margin: 0 auto 15px auto;
+            width: 120px; height: 145px; border: 1px solid var(--glow-cyan);
+            position: relative; background: #000; margin: 0 auto 15px auto; overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
         }
-
-        /* Scanning Line Animation overlay on profile picture */
         .hologram-viewport::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            background: var(--glow-cyan);
-            box-shadow: 0 0 8px var(--glow-cyan);
-            top: 0; left: 0;
-            animation: cyberScan 2.5s linear infinite;
+            content: ""; position: absolute; width: 100%; height: 4px; background: var(--glow-cyan);
+            top: 0; left: 0; animation: laserScan 2.2s linear infinite; box-shadow: 0 0 10px var(--glow-cyan);
         }
+        @keyframes laserScan { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+        .hologram-viewport img { width: 100%; height: 100%; object-fit: cover; }
 
-        @keyframes cyberScan {
-            0% { top: 0%; }
-            50% { top: 100%; }
-            100% { top: 0%; }
-        }
-
-        .hologram-viewport img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: hue-rotate(180deg) brightness(1.1) contrast(1.1);
-        }
-
-        .id-meta-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            border-bottom: 1px dashed rgba(0, 243, 255, 0.15);
-            padding-bottom: 4px;
-        }
-
+        .id-meta-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed rgba(0,243,255,0.15); padding-bottom: 4px; }
         .id-meta-label { color: rgba(0, 243, 255, 0.7); }
-        .id-meta-val { color: #fff; font-weight: bold; text-transform: uppercase;}
+        .id-meta-val { font-weight: bold; text-transform: uppercase; }
 
-        .stamp-rank {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--glow-cyan);
-            text-shadow: 0 0 15px var(--glow-cyan);
+        /* Dynamic Class Matrix HUD */
+        .class-badge-container {
+            background: rgba(255, 0, 85, 0.1); border: 1px solid var(--neon-red);
+            padding: 8px; text-align: center; border-radius: 4px; margin-top: 10px;
+            font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-red); color: #fff;
         }
 
-        /* EXP HUD Progress Bar */
-        .hud-bar-container {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            height: 24px;
-            position: relative;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 10px;
+        /* Star Credits Counter display style */
+        .star-credit-vault {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold-star);
+            padding: 6px; border-radius: 4px; margin-top: 10px;
+            font-family: 'Orbitron'; font-weight: bold; color: var(--gold-star);
         }
 
-        .hud-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--glow-blue), var(--glow-cyan));
-            width: 0%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px var(--glow-cyan);
+        /* HUD Engine Progress Bars */
+        .hud-bar-container { background: #000; border: 1px solid rgba(0, 243, 255, 0.3); height: 24px; position: relative; overflow: hidden; margin-top: 8px; }
+        .hud-bar-fill { height: 100%; background: linear-gradient(90deg, var(--glow-blue), var(--glow-cyan)); width: 0%; transition: 0.2s; }
+        .hud-bar-text { position: absolute; width: 100%; text-align: center; top: 50%; transform: translateY(-50%); font-size: 0.9rem; font-weight: bold; }
+
+        /* Workout Matrix Config */
+        .workout-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 243, 255, 0.3); color: #fff;
+            padding: 8px 16px; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
         }
+        .tab-btn.active { background: var(--glow-blue); border-color: var(--glow-cyan); box-shadow: 0 0 10px var(--glow-blue); }
 
-        .hud-bar-text {
-            position: absolute;
-            width: 100%; text-align: center;
-            top: 50%; left: 0;
-            transform: translateY(-50%);
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 2px #000;
+        .workout-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; max-height: 300px; overflow-y: auto; }
+        .workout-node {
+            background: #040812; border: 1px solid rgba(255,255,255,0.08); padding: 14px;
+            cursor: pointer; border-radius: 4px; transition: 0.2s;
         }
+        .workout-node:hover, .workout-node.selected { border-color: var(--glow-cyan); background: rgba(0,243,255,0.06); }
 
-        /* Quest Direct Nodes */
-        .quest-node {
-            background: rgba(4, 8, 18, 0.7);
-            border: 1px solid rgba(0, 102, 255, 0.2);
-            padding: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 4px;
-        }
+        /* Cognitive AI Explainer Panel */
+        .ai-intel-panel { background: #02050c; border-left: 4px solid var(--glow-cyan); padding: 18px; margin-top: 15px; border-radius: 0 4px 4px 0; }
+        .ai-status-pulse { display: inline-block; width: 10px; height: 10px; background: var(--neon-green); border-radius: 50%; margin-right: 8px; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0; } }
 
-        .quest-node.complete {
-            border-color: #00ff66;
-            background: rgba(0, 255, 102, 0.03);
-        }
-
-        .quest-action-btn {
-            background: transparent;
-            border: 1px solid var(--glow-cyan);
-            color: var(--glow-cyan);
-            padding: 6px 16px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-            transition: 0.2s;
-        }
-
-        .quest-action-btn:hover {
-            background: var(--glow-cyan);
-            color: #000;
-            box-shadow: 0 0 12px var(--glow-cyan);
-        }
-
-        /* Live Hacker Terminal Logs Box */
-        .terminal-console-box {
-            background: #020205;
-            border: 1px solid #222;
-            padding: 12px;
-            height: 120px;
-            overflow-y: auto;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
-            color: #00ff66;
-            margin-top: 20px;
-            border-left: 3px solid var(--glow-cyan);
-        }
-
-        .log-entry { margin-bottom: 4px; }
-        .log-entry::before { content: ">> "; color: var(--glow-cyan); }
-
-        /* Leaderboard Matrix Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th, td { padding: 12px; text-align: left; }
-        th { color: var(--glow-cyan); border-bottom: 2px solid rgba(0, 243, 255, 0.3); font-family: 'Orbitron', sans-serif;}
-        td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* Logs Console */
+        .terminal-box { background: #010103; border: 1px solid #161622; padding: 12px; height: 110px; overflow-y: auto; color: var(--neon-green); font-size: 0.85rem; line-height: 1.4; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        th { color: var(--glow-cyan); font-family: 'Orbitron'; }
         tr.highlight-me { background: rgba(0, 243, 255, 0.08); color: var(--glow-cyan); }
 
-        /* Level Burst Overlay Screen */
-        #level-flash-overlay {
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+        /* Giant Congratulations Overlap Screen */
+        #level-flash {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.96);
+            z-index: 10000; display: none; justify-content: center; align-items: center; flex-direction: column;
+            text-align: center; padding: 20px;
         }
-
-        .level-burst-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 5rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 30px var(--glow-cyan), 0 0 60px var(--glow-blue);
-            animation: textGlitch 0.3s infinite;
-        }
-
-        /* Screen Shake Animation triggers on main dashboard */
-        .shake-effect {
-            animation: masterShake 0.4s linear;
-        }
-
-        @keyframes masterShake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-
+        .burst-star { font-size: 4rem; color: var(--gold-star); animation: spin 1.5s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body id="core-body">
+<body>
 
-    <!-- MATRIX MATRIX RUNNING ENGINE BACKGROUND -->
     <canvas id="matrix-canvas"></canvas>
 
     <div class="container">
-        
-        <header>
-            <div class="main-title">[ SAHIL THE SYSTEM ]</div>
-            <p style="color: rgba(255,255,255,0.5); letter-spacing: 2px; font-size: 0.9rem;">MONARCH PLAYER TERMINAL INTERFACE v4.0</p>
+        <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; text-align: center;">
+                <div class="main-title">[ SAHIL THE SYSTEM ]</div>
+                <p style="color: var(--glow-cyan); letter-spacing: 3px; font-size: 0.9rem;">SUPREME MONARCH PLAYER INTERFACE v10.0</p>
+            </div>
+            <!-- Hidden Pro Hack Booster for Quick Leveling Setup Testing -->
+            <button class="quest-action-btn" onclick="executeSystemOverdriveHack()" style="background: rgba(255,0,85,0.1); border: 1px solid var(--neon-red); color: var(--neon-red); padding: 5px 12px; font-size: 0.8rem; cursor: pointer;">⚡ OVERDRIVE CORE (EXP BOOST)</button>
         </header>
 
-        <!-- SCREEN 1: THE CYBER HACKER INITIALIZATION ENTRY -->
+        <!-- SCREEN 1: ACCESS INITIALIZATION INTERFACE -->
         <div id="screen-reg" class="screen active">
             <div class="hacker-auth-box">
-                <h3 style="margin-bottom: 20px; font-family:'Orbitron'; text-align:center; letter-spacing:1px;">IDENTIFICATION PROTOCOL</h3>
-                
+                <h3 style="margin-bottom: 25px; font-family:'Orbitron'; text-align:center; letter-spacing: 1px;">AUTHENTICATE SYSTEM KEY</h3>
                 <div class="field-group">
-                    <label>Hunter Persona Name</label>
-                    <input type="text" id="reg-name" placeholder="Execute designation lookup name..." autocomplete="off">
+                    <label>Player Designation Name</label>
+                    <input type="text" id="reg-name" value="Mr Sahil Pal">
                 </div>
-
                 <div class="field-group">
-                    <label>Awakening Date (DOB)</label>
-                    <input type="date" id="reg-dob">
+                    <label>Awakening Vector Date (DOB)</label>
+                    <input type="date" id="reg-dob" value="2002-08-20">
                 </div>
-
                 <div class="field-group">
-                    <label>Neural Identity Mapping (Profile Image)</label>
+                    <label>Neural Core Mapping (Profile Photo)</label>
                     <input type="file" id="reg-pic" accept="image/*">
                 </div>
-
-                <button class="term-btn" onclick="initializeAwakening()">Sync Neural Pattern & Boot</button>
+                <button class="term-btn" onclick="bootSystemConsole()">Initialize Core Engine</button>
             </div>
         </div>
 
-        <!-- SCREEN 2: MAIN PRO HARDCORE ANIME HUD INTERFACE -->
+        <!-- SCREEN 2: MAIN SYSTEMS HARDCORE INTERFACE -->
         <div id="screen-dashboard" class="screen dashboard-layout">
             
-            <!-- LEFT PANEL: PROFILE + LIVE CODES -->
+            <!-- LEFT PROFILE MATRIX TRACKER -->
             <div style="display: flex; flex-direction: column; gap: 20px;">
-                
-                <!-- DIGITAL HUNTER LICENSE GRID CONTAINER -->
                 <div class="panel hollow-id-card">
-                    <div class="stamp-rank" id="hud-rank">E</div>
-                    
                     <div class="hologram-viewport">
-                        <img id="hud-pic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%2305050a'/></svg>" alt="Hologram">
+                        <img id="hud-pic" src="" alt="Hologram Grid">
                     </div>
-
-                    <div class="id-meta-row"><div class="id-meta-label">HUNTER:</div><div class="id-meta-val" id="hud-name">UNKNOWN</div></div>
-                    <div class="id-meta-row"><div class="id-meta-label">ID CODE:</div><div class="id-meta-val" id="hud-id">SYS-000000</div></div>
-                    <div class="id-meta-row"><div class="id-meta-label">SYNCHRONIZED:</div><div class="id-meta-val" id="hud-dob">00/00/0000</div></div>
-                    <div class="id-meta-row"><div class="id-meta-label">CLASS MATRIX:</div><div class="id-meta-val" style="color: var(--glow-cyan);">SHADOW MONARCH</div></div>
+                    <div class="id-meta-row"><div>MONARCH IDENTITY:</div><div id="hud-name" class="id-meta-val">MR SAHIL PAL</div></div>
+                    <div class="id-meta-row"><div>REGISTRY CODE:</div><div id="hud-id" class="id-meta-val">SYS-999X</div></div>
+                    <div class="id-meta-row"><div>SYNC VECTOR:</div><div id="hud-dob" class="id-meta-val">00/00/0000</div></div>
+                    
+                    <!-- Core Classes System Requirement Container Box -->
+                    <div class="id-meta-label" style="margin-top:15px; font-size:0.8rem; text-align:center;">CURRENT SYSTEM EVOLUTION MATRIX</div>
+                    <div class="class-badge-container" id="hud-class-badge">SYSTEM RECRUIT</div>
+                    
+                    <!-- Star Credits Matrix Counter Box -->
+                    <div class="star-credit-vault" id="hud-star-counter">
+                        <span>⭐ STAR VAULT CORES:</span>
+                        <span style="font-size: 1.2rem; font-weight: 900;">0</span>
+                    </div>
                 </div>
 
-                <!-- HUD PROGRESS MATRIX LEVEL CONTROLLER -->
                 <div class="panel">
-                    <div class="panel-title">
-                        <span>SYSTEM ENGINE STATUS</span>
-                        <span id="hud-level" style="color: #fff; font-weight: 900;">LVL 1</span>
-                    </div>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4);">EXP REQUISITION CAPACITY</p>
+                    <div class="panel-title"><span>SYSTEM ENGINE INTEL</span><span id="hud-level" style="color: #fff; font-weight: 900;">LVL 1</span></div>
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-bottom: 5px;">EXP REQUISITION SPECTRUM</p>
                     <div class="hud-bar-container">
                         <div class="hud-bar-fill" id="hud-exp-fill"></div>
-                        <div class="hud-bar-text" id="hud-exp-text">0 / 100</div>
+                        <div class="hud-bar-text" id="hud-exp-text">0 / 100 EXP</div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- RIGHT PANEL: QUEST LOGS AND LEADERBOARDS CORE -->
+            <!-- RIGHT SYSTEM LOGISTICS MANAGEMENT NODES -->
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 
-                <!-- QUEST CONTROLLER HUD NODES -->
+                <!-- WORLDWIDE GENERAL WORKOUT CLUSTER MATRIX -->
                 <div class="panel">
-                    <div class="panel-title"><span>DAILY OVERLOAD MANDATORY QUESTS</span></div>
-                    
-                    <div class="quest-node" id="qn-pushup">
-                        <div>
-                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[01] PUSH-UPS MATRIX REPS</span>
-                            <span id="txt-pushup" style="color: #888; font-size: 0.9rem;">0 / 100 COMPLETE</span>
-                        </div>
-                        <button class="quest-action-btn" onclick="executeQuestNode('pushup', 10, 100)">+10 REPS</button>
+                    <div class="panel-title"><span>UNIVERSAL WORKOUT CORES MATRIX (ALL WORKOUTS)</span></div>
+                    <div class="workout-tabs" id="workout-category-switches"></div>
+                    <div class="workout-grid" id="workout-nodes-cluster"></div>
+                </div>
+
+                <!-- COGNITIVE HINDI AI EXPLAINER MODULE -->
+                <div class="panel" style="border-top-color: var(--glow-cyan);">
+                    <div class="panel-title"><span>MONARCH COGNITIVE AI DIAGNOSTICS Desk</span></div>
+                    <div class="ai-intel-panel">
+                        <h3 style="color: #fff; margin-bottom: 10px;"><span class="ai-status-pulse"></span>AI Sync Stream: <span id="ai-target-name" style="color: var(--glow-cyan);">Select An Exercise</span></h3>
+                        <p style="margin-bottom: 10px; font-size: 1.05rem;"><strong>Yeh Kya Hota Hai:</strong> <span id="ai-target-kya" style="color: #bbb;">Waiting for node initialization...</span></p>
+                        <p style="margin-bottom: 15px; font-size: 1.05rem;"><strong>Yeh Kya Nahi Hota Hai:</strong> <span id="ai-target-nahi" style="color: #bbb;">Waiting for node initialization...</span></p>
+                        <button class="term-btn" id="ai-audio-trigger-btn" onclick="triggerAIVoiceStream()" style="width:auto; padding: 6px 15px; font-size: 0.85rem; border-color: var(--neon-green); color: var(--neon-green); display:none;">🔊 Listen Neural AI Voice Intel</button>
                     </div>
 
-                    <div class="quest-node" id="qn-situp">
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #161625;">
                         <div>
-                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[02] SIT-UPS KINETIC DATA</span>
-                            <span id="txt-situp" style="color: #888; font-size: 0.9rem;">0 / 100 COMPLETE</span>
+                            <span style="font-weight: bold; color: var(--neon-red); letter-spacing: 1px;">KINETIC ACTION REPS:</span>
+                            <span id="target-rep-count" style="color: #fff; margin-left: 10px; font-weight: bold;">Total Reps: 0</span>
                         </div>
-                        <button class="quest-action-btn" onclick="executeQuestNode('situp', 10, 100)">+10 REPS</button>
-                    </div>
-
-                    <div class="quest-node" id="qn-run">
-                        <div>
-                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[03] VELOCITY RUN SPATIAL TRAIL</span>
-                            <span id="txt-run" style="color: #888; font-size: 0.9rem;">0 / 10 KM VECTOR</span>
-                        </div>
-                        <button class="quest-action-btn" onclick="executeQuestNode('run', 1, 10)">+1 KM</button>
+                        <button class="term-btn" onclick="commitSelectedWorkoutMetrics()" style="width: auto; padding: 6px 22px; font-size: 0.9rem;">Execute Workout (+10 Reps)</button>
                     </div>
                 </div>
 
-                <!-- THE REAL-TIME SYSTEM LOG OUTPUT STREAM -->
+                <!-- LIVE LOGGER CONSOLE COMMAND TERMINAL -->
                 <div class="panel" style="border-top-color: var(--neon-red);">
-                    <div class="panel-title"><span>LIVE SYSTEM ENGINE COMMAND SHELL</span></div>
-                    <div class="terminal-console-box" id="terminal-logger">
-                        <div class="log-entry">SYSTEM ONLINE: Welcome, Shadow Monarch Master Sahil.</div>
-                    </div>
+                    <div class="panel-title"><span>LIVE SYSTEM ENGINE LOG SHELL</span></div>
+                    <div class="terminal-box" id="terminal-stream-logger"></div>
                 </div>
 
-                <!-- GLOBAL LEADERBOARD HUD DATA -->
+                <!-- GLOBAL MATRIX HALL OF FAME LEADERBOARD -->
                 <div class="panel">
-                    <div class="panel-title"><span>SUPREME MATRIX HUNTER HALL OF FAME</span></div>
+                    <div class="panel-title"><span>SUPREME MATRIX GLOBAL LEADERBOARD</span></div>
                     <table>
                         <thead>
                             <tr>
-                                <th>GRID RANK</th>
-                                <th>MONARCH IDENTIFICATION</th>
-                                <th>LEVEL</th>
-                                <th>COMPLIANCE STATUS</th>
+                                <th>MATRIX GRID</th>
+                                <th>PLAYER IDENTIFICATION</th>
+                                <th>CORE LEVEL</th>
+                                <th>EVOLUTION MATRIX CLASS</th>
                             </tr>
                         </thead>
-                        <tbody id="leaderboard-target">
-                            <!-- Injected Dynamically by System Core Engine -->
-                        </tbody>
+                        <tbody id="global-leaderboard-body"></tbody>
                     </table>
                 </div>
 
             </div>
-
         </div>
-
     </div>
 
-    <!-- MAIN LEVEL BREAKOUT BURST HUD OVERLAY -->
-    <div id="level-flash-overlay">
-        <div class="level-burst-text">LEVEL UP</div>
-        <div style="font-family:'Orbitron'; color: var(--glow-cyan); letter-spacing: 8px; margin-top: 10px;">CAPACITY EXTENDED</div>
+    <!-- GIANT LEVEL COMPLIANCE CONGRATULATIONS LIGHTING SCREEN -->
+    <div id="level-flash">
+        <div class="burst-star">⭐</div>
+        <div style="font-family:'Orbitron'; font-size: 5rem; font-weight: 900; color: #fff; text-shadow: 0 0 35px var(--neon-green); margin: 15px 0;">LEVEL UP</div>
+        <div id="level-popup-subtitle" style="font-family:'Orbitron'; color: var(--glow-cyan); letter-spacing: 6px; font-size: 1.3rem;">STAR CREDITS SECURED</div>
     </div>
 
     <script>
-        // 1. ADVANCED HACKER BACKGROUND MATRIX MATRIX ENGINE
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const matrixChars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ".split("");
-        const fontSize = 14;
-        let columns = canvas.width / fontSize;
-        let rainDrops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrixRain() {
-            ctx.fillStyle = 'rgba(2, 2, 8, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00f3ff';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
+        // 1. HARDCORE DIGITAL BACKGROUND canvas
+        const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
+        function adjustCanvasSize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        adjustCanvasSize(); window.addEventListener('resize', adjustCanvasSize);
+        const matrixSymbols = "0101MASTERULTRASTARSAHILMONARCH".split(""); const textScaleSize = 14;
+        let columnTracks = canvas.width / textScaleSize; let matrixDrops = Array(Math.floor(columnTracks)).fill(1);
+        function streamMatrixCode() {
+            ctx.fillStyle = 'rgba(2, 2, 6, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00f3ff'; ctx.font = textScaleSize + 'px monospace';
+            for (let i = 0; i < matrixDrops.length; i++) {
+                const glyph = matrixSymbols[Math.floor(Math.random() * matrixSymbols.length)];
+                ctx.fillText(glyph, i * textScaleSize, matrixDrops[i] * textScaleSize);
+                if (matrixDrops[i] * textScaleSize > canvas.height && Math.random() > 0.98) matrixDrops[i] = 0;
+                matrixDrops[i]++;
             }
         }
-        setInterval(drawMatrixRain, 33);
+        setInterval(streamMatrixCode, 32);
 
-        // 2. CORE GAME SYSTEM LOGIC
-        let player = {
-            name: "Unknown Master",
-            dob: "Classified",
-            id: "SAHIL-" + Math.floor(100000 + Math.random() * 899999),
-            level: 1,
-            exp: 0,
-            maxExp: 100,
-            rank: 'E',
-            quests: { pushup: 0, situp: 0, run: 0 }
+        // 2. DUNIYA KE SAARE WORKOUTS CATEGORY DATA WITH INTEL
+        const comprehensiveWorkouts = {
+            chest_push: [
+                { id: "w_st_p", name: "Standard Pushups", kya: "Yeh chest (pectoralis major), shoulders aur triceps ko ek sath build karne ki foundational exercise hai. Isse upper body ki structural strength milti hai.", nahi: "Yeh exercise aapke wings ya biceps ko isolate nahi karti, aur na hi isse ek din me chest fat khatam hota hai." },
+                { id: "w_dec_p", name: "Decline Pushups", kya: "Isme pairon ko unchai par rakha jata hai, jisse gravity ka pura load aapki upper chest line aur front deltoids par shift ho jata hai.", nahi: "Yeh lower drooping chest shape ko thik karne ke liye target matrix tool nahi hai." },
+                { id: "w_inc_p", name: "Incline Pushups", kya: "Isme haath bench ya unchi jagah par hote hain, jo lower pectorals muscle zone ko activate karne aur push strength sudharne me madad karta hai.", nahi: "Yeh heavy upper chest definition build up karne ke liye upyogi nahi hai." },
+                { id: "w_diam_p", name: "Diamond Pushups", kya: "Haathon ko diamond shape me paas rakh kar kiya jata hai. Yeh triceps muscles aur inner chest fibers par massive stress aur pump lata hai.", nahi: "Agar aapki kalai (wrists) me dard hai, toh yeh unke liye safe exercise nahi hai." }
+            ],
+            back_pull: [
+                { id: "w_std_pull", name: "Classic Pull-ups", kya: "Apni back ko wide, V-shape dene aur latissimus dorsi muscles ko maximum stretch aur thick karne ki ultimate master exercise hai.", nahi: "Yeh forearm build up karne ka main method nahi hai aur bina shoulder structural engagement ke bekar hai." },
+                { id: "w_chin_up", name: "Chin-ups Core", kya: "Underhand grip se kiya jata hai jo back lat network ke sath aapke biceps brachii muscle par bohot strong overload dalta hai.", nahi: "Yeh width badhane ke liye standard pull-ups se zyada effective nahi hoti." },
+                { id: "w_inv_row", name: "Inverted Body Rows", kya: "Haath se pole ya table pakad kar body ko upar pull kiya jata hai, jo upper back ki motai (thickness) aur rhomboids ko target karta hai.", nahi: "Yeh vertical spinal extension posture ke liye heavy weighted rows ka substitute nahi hai." }
+            ],
+            legs_core: [
+                { id: "w_sq_legs", name: "Air Squats Dynamic", kya: "Lower body muscles ki core functional king movement hai jo quadriceps, hamstrings aur glutes ko power aur functional velocity deti hai.", nahi: "Yeh ghutno ko damage nahi karti balki ghutno ke aas-paas ke ligaments ko strong banati hai agar posture thik ho." },
+                { id: "w_lunges", name: "Forward Lunges", kya: "Ek-ek pair par gravity isolate karke balance, core stabilization aur glute activation ko dynamic range par trigger karti hai.", nahi: "Yeh lower back expansion muscle group ko enhance karne ke liye nahi bani hai." },
+                { id: "w_plank", name: "Isotropic Plank", kya: "Static hold framework hai jo transverse abdominis, rectus abdominis aur entire lower spinal column ko solid frame me jamata hai.", nahi: "Plank karne se tab tak six-pack abs visibility nahi aayegi jab tak body fat percentage kam na ho." },
+                { id: "w_leg_r", name: "Hanging Leg Raises", kya: "Lower abdominal wall aur hip flexors ki deep structural micro fibers ko trace aur solid shape karne ki hardcore core entry hai.", nahi: "Yeh aapke stomach ki upper bloating ya fat layers ko crunch karke instantly dissolve nahi kar sakti." }
+            ],
+            cardio_stamina: [
+                { id: "w_burpee", name: "Tactical Burpees", kya: "Full-body metabolic burst explosive exercise hai, jo high capacity endurance, cardiovascular heart rate aur explosive athletic strength badhati hai.", nahi: "Yeh clean pure body hypertrophy ya heavy mass build up process ka hissa nahi hai." },
+                { id: "w_j_jacks", name: "Jumping Jacks Core", kya: "Plyometric aerobic movement hai jo full body warm-up, oxygen flow synchronization aur rapid fat-burning zones ko trigger karti hai.", nahi: "Yeh complex mechanical strength ya targeted resistance generation platform ke liye functional nahi hai." }
+            ]
         };
 
-        let staticLeaderboardData = [
-            { name: "Sung Jin-Woo", level: 999, rank: "S" },
-            { name: "Thomas Andre", level: 912, rank: "S" },
-            { name: "Cha Hae-In", level: 742, rank: "A" },
-            { name: "Baek Yoonho", level: 610, rank: "A" }
-        ];
+        // 3. STORAGE SYNC REAL TIME ENGINE
+        let player = JSON.parse(localStorage.getItem('monarch_system_ultra_pro_data')) || {
+            name: "Mr Sahil Pal", dob: "Classified", id: "SYS-" + Math.floor(100000 + Math.random()*899999),
+            level: 1, exp: 0, maxExp: 100, class: 'SYSTEM RECRUIT', stars: 0, trackingTotals: {}
+        };
 
-        function printLog(message) {
-            const logger = document.getElementById('terminal-logger');
-            const entry = document.createElement('div');
-            entry.className = "log-entry";
-            entry.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
-            logger.appendChild(entry);
-            logger.scrollTop = logger.scrollHeight;
+        let currentActiveCategory = 'chest_push';
+        let currentSyncedNode = null;
+
+        function preserveSystemState() {
+            localStorage.setItem('monarch_system_ultra_pro_data', JSON.stringify(player));
         }
 
-        function initializeAwakening() {
-            const name = document.getElementById('reg-name').value;
-            const dob = document.getElementById('reg-dob').value;
-            const pic = document.getElementById('reg-pic').files[0];
+        function pushTerminalLog(message) {
+            const display = document.getElementById('terminal-stream-logger');
+            const element = document.createElement('div');
+            element.innerText = `[${new Date().toLocaleTimeString()}] > ${message}`;
+            display.appendChild(element); display.scrollTop = display.scrollHeight;
+        }
 
-            if(!name || name.trim() === "") {
-                alert("CRITICAL ERROR: Hunter Authentication Name Matrix cannot be empty.");
-                return;
-            }
+        // INITIALIZE SYSTEM ENGINE AND TRIGGER FIRST AUDIO WELCOME
+        function bootSystemConsole() {
+            const inputName = document.getElementById('reg-name').value;
+            const inputDob = document.getElementById('reg-dob').value;
+            const inputPic = document.getElementById('reg-pic').files[0];
 
-            player.name = name;
-            player.dob = dob ? dob : "UNKNOWN MAP";
+            if(!inputName.trim()) return alert("CRITICAL ACCESS ERROR: Authentication requires player name key.");
+            
+            player.name = inputName;
+            player.dob = inputDob ? inputDob : "Classified Data";
 
-            // Sync elements to interface dashboard
+            // Map data to dashboard visual elements
             document.getElementById('hud-name').innerText = player.name;
             document.getElementById('hud-dob').innerText = player.dob;
             document.getElementById('hud-id').innerText = player.id;
 
-            if(pic) {
+            if(inputPic) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('hud-pic').src = e.target.result;
-                }
-                reader.readAsDataURL(pic);
+                reader.onload = function(e) { document.getElementById('hud-pic').src = e.target.result; };
+                reader.readAsDataURL(inputPic);
             } else {
-                document.getElementById('hud-pic').src = "https://via.placeholder.com/150/020208/00f3ff?text=HOLOGRAM+ONLINE";
+                document.getElementById('hud-pic').src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='145'><rect width='100%' height='100%' fill='%23040812'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300f3ff' font-size='10'>HOLOGRAM CORE</text></svg>";
             }
 
-            // Switch Screen State cleanly
+            // TRIGGER AUDIO BOOT WELCOME SPEECH
+            try {
+                window.speechSynthesis.cancel();
+                let welcomeLine = "Mr Sahil Pal ke system me Aapka sawagat hai.";
+                let speechOutput = new SpeechSynthesisUtterance(welcomeLine);
+                speechOutput.lang = 'hi-IN'; speechOutput.rate = 0.95;
+                window.speechSynthesis.speak(speechOutput);
+            } catch(e) { console.log("Speech initialization delayed.", e); }
+
             document.getElementById('screen-reg').classList.remove('active');
             document.getElementById('screen-dashboard').classList.add('active');
 
-            printLog(`AWAKENING SEQUENCE FULLY SYNCED. Welcome ${player.name} to the Core.`);
-            updateHUDSystem();
+            pushTerminalLog(`SYSTEM CONFIGURATION SYNCHRONIZED: Core active for player ${player.name}.`);
+            renderWorkoutClusterUI();
+            recalculateEvolutionClass();
+            refreshHUDBars();
         }
 
-        function executeQuestNode(type, val, targetMax) {
-            if(player.quests[type] < targetMax) {
-                player.quests[type] += val;
-                if(player.quests[type] > targetMax) player.quests[type] = targetMax;
+        // GENERATE WORKOUT CATEGORIES AND INDIVIDUAL NODES
+        function renderWorkoutClusterUI() {
+            const tabRow = document.getElementById('workout-category-switches');
+            tabRow.innerHTML = '';
+            Object.keys(comprehensiveWorkouts).forEach(category => {
+                let btn = document.createElement('button');
+                btn.className = `tab-btn ${category === currentActiveCategory ? 'active' : ''}`;
+                btn.innerText = category.replace('_', ' ').toUpperCase();
+                btn.onclick = () => { currentActiveCategory = category; renderWorkoutClusterUI(); };
+                tabRow.appendChild(btn);
+            });
 
-                printLog(`INCOMING RESOURCE SIGNAL: Registered +${val} metrics to [${type.toUpperCase()}] matrix.`);
-                
-                // Add System EXP reward
-                player.exp += 30;
+            const gridDisplay = document.getElementById('workout-nodes-cluster');
+            gridDisplay.innerHTML = '';
+            comprehensiveWorkouts[currentActiveCategory].forEach(workout => {
+                let block = document.createElement('div');
+                block.className = `workout-node ${currentSyncedNode?.id === workout.id ? 'selected' : ''}`;
+                block.innerHTML = `<strong>${workout.name}</strong><br><span style="font-size:0.8rem; color:var(--glow-cyan);">Reps Logged: ${player.trackingTotals[workout.id] || 0}</span>`;
+                block.onclick = () => syncWorkoutNodeToAI(workout);
+                gridDisplay.appendChild(block);
+            });
+        }
 
-                if(player.quests[type] === targetMax) {
-                    document.getElementById('qn-' + type).classList.add('complete');
-                    printLog(`QUEST MILESTONE: [${type.toUpperCase()}] fully optimized to maximum thresholds!`);
-                }
+        // AI DESK INTERFACE CONFIGURATION ON SELECTION
+        function syncWorkoutNodeToAI(workout) {
+            currentSyncedNode = workout;
+            document.getElementById('ai-target-name').innerText = workout.name;
+            document.getElementById('ai-target-kya').innerText = workout.kya;
+            document.getElementById('ai-target-nahi').innerText = workout.nahi;
+            document.getElementById('target-rep-count').innerText = `Total Reps: ${player.trackingTotals[workout.id] || 0}`;
+            document.getElementById('ai-audio-trigger-btn').style.display = 'inline-block';
+            
+            pushTerminalLog(`COGNITIVE SYNC: Target workout package [${workout.name}] aligned to AI processing module.`);
+            renderWorkoutClusterUI();
+        }
 
-                evaluateLevelTree();
-                updateHUDSystem();
-            } else {
-                printLog(`SYSTEM OVERLOAD NOTICE: [${type.toUpperCase()}] threshold already capped for solar cycle.`);
+        // LIVE AUDIO VOICE BROADCAST IN HINDI FOR CURRENT EXERCISE
+        function triggerAIVoiceStream() {
+            if(!currentSyncedNode) return;
+            window.speechSynthesis.cancel();
+            let promptText = `${currentSyncedNode.name} ke baare mein AI analysis. Yeh hota hai: ${currentSyncedNode.kya} Aur suniye, yeh kya nahi hota hai: ${currentSyncedNode.nahi}`;
+            let speechObject = new SpeechSynthesisUtterance(promptText);
+            speechObject.lang = 'hi-IN'; speechObject.rate = 1.0;
+            window.speechSynthesis.speak(speechObject);
+        }
+
+        // WORKOUT METRICS LOGGER & PROCESSOR
+        function commitSelectedWorkoutMetrics() {
+            if(!currentSyncedNode) {
+                alert("SYSTEM TRACKING NOTICE: Please select an active workout data node from the cluster matrix first!");
+                return;
             }
+
+            let workoutId = currentSyncedNode.id;
+            player.trackingTotals[workoutId] = (player.trackingTotals[workoutId] || 0) + 10;
+            player.exp += 45; // High reward EXP gain profile to maintain system speed feel
+
+            pushTerminalLog(`METRIC COLLECTED: Logged +10 reps of ${currentSyncedNode.name}. EXP stream ingested.`);
+            document.getElementById('target-rep-count').innerText = `Total Reps: ${player.trackingTotals[workoutId]}`;
+
+            processLevelProgressionTree();
+            preserveSystemState();
+            refreshHUDBars();
+            renderWorkoutClusterUI();
         }
 
-        function evaluateLevelTree() {
-            if(player.exp >= player.maxExp && player.level < 1000) {
+        // SYSTEM CORE DEVELOPER METHOD TO TEST ADVANCED LEVELS QUICKLY
+        function executeSystemOverdriveHack() {
+            player.exp += 8500; 
+            pushTerminalLog("CORE OVERDRIVE SIGNAL TRIGGERED: Massive external EXP stream injected into system framework!");
+            processLevelProgressionTree();
+            preserveSystemState();
+            refreshHUDBars();
+        }
+
+        // LEVEL VALIDATOR & STAR DISTRIBUTION ARCHITECTURE WITH VOICE RESPONSE
+        function processLevelProgressionTree() {
+            let leveledUpFlag = false;
+
+            while(player.exp >= player.maxExp && player.level < 5000) {
                 player.level++;
                 player.exp = player.exp - player.maxExp;
-                player.maxExp = Math.floor(player.maxExp * 1.45);
+                player.maxExp = Math.floor(player.maxExp * 1.35);
+                
+                // Award star on every level upgrade configuration
+                player.stars += 1; 
+                leveledUpFlag = true;
+            }
 
-                executeRankRecalibration();
-                triggerCinematicLevelUp();
-
-                if(player.exp >= player.maxExp) evaluateLevelTree();
+            if(leveledUpFlag) {
+                recalculateEvolutionClass();
+                triggerCinematicCongratulationSequence();
             }
         }
 
-        function executeRankRecalibration() {
-            if(player.level > 10) player.rank = 'D';
-            if(player.level > 35) player.rank = 'C';
-            if(player.level > 70) player.rank = 'B';
-            if(player.level > 150) player.rank = 'A';
-            if(player.level > 300) player.rank = 'S';
-            document.getElementById('hud-rank').innerText = player.rank;
+        // RECALCULATE DYNAMIC SYSTEM CLASSES SPECIFIED BY USER RULES
+        function recalculateEvolutionClass() {
+            let previousClass = player.class;
+
+            if (player.level < 500) {
+                player.class = "SYSTEM RECRUIT";
+                document.getElementById('hud-class-badge').style.textShadow = "0 0 10px var(--neon-red)";
+                document.getElementById('hud-class-badge').style.borderColor = "var(--neon-red)";
+            } else if (player.level >= 500 && player.level < 1000) {
+                player.class = "LEGEND";
+                document.getElementById('hud-class-badge').style.textShadow = "0 0 15px var(--gold-star)";
+                document.getElementById('hud-class-badge').style.borderColor = "var(--gold-star)";
+            } else if (player.level >= 1000 && player.level < 1500) {
+                player.class = "PRO";
+                document.getElementById('hud-class-badge').style.textShadow = "0 0 15px var(--glow-cyan)";
+                document.getElementById('hud-class-badge').style.borderColor = "var(--glow-cyan)";
+            } else if (player.level >= 1500) {
+                player.class = "ULTRA PRO MAX";
+                document.getElementById('hud-class-badge').style.textShadow = "0 0 25px var(--neon-green)";
+                document.getElementById('hud-class-badge').style.borderColor = "var(--neon-green)";
+            }
+
+            document.getElementById('hud-class-badge').innerText = player.class;
+
+            if(previousClass !== player.class) {
+                pushTerminalLog(`EVOLUTIONARY SHIFT DETECTED: Player rank structural matrix evolved to [${player.class}]!`);
+            }
         }
 
-        function triggerCinematicLevelUp() {
-            printLog(`CRITICAL ANNOUNCEMENT: Level limits shattered! Current Grid Status: LVL ${player.level}`);
+        // GIANT FULL SCREEN CINEMATIC VISUAL LEVEL FLASH WITH AI SPEECH CONGRATS ENGINE
+        function triggerCinematicCongratulationSequence() {
+            pushTerminalLog(`CRITICAL ARCHITECTURE EVENT: Level threshold bypassed. Current Standing: LVL ${player.level}. Star Vault Secured.`);
             
-            // Trigger overlay
-            const overlay = document.getElementById('level-flash-overlay');
-            overlay.style.display = 'flex';
-            
-            // Screen Shake trigger
-            document.getElementById('core-body').classList.add('shake-effect');
+            // Sync Visual HUD Vault Counters
+            document.getElementById('hud-star-counter').innerHTML = `<span>⭐ STAR VAULT CORES:</span> <span style="font-size: 1.2rem; font-weight: 900;">${player.stars}</span>`;
 
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                document.getElementById('core-body').classList.remove('shake-effect');
-            }, 1300);
+            // Setup overlay text variables dynamic representation
+            document.getElementById('level-popup-subtitle').innerText = `CURRENT SYSTEM CORE: LVL ${player.level} | STAR VAULT STACKED`;
+            
+            const windowOverlay = document.getElementById('level-flash');
+            windowOverlay.style.display = 'flex';
+
+            // TRIGGER AI VOICE SPEECH SYSTEM ("Congratulations...")
+            try {
+                window.speechSynthesis.cancel();
+                let congratulatoryStatement = `Congratulations Mr Sahil Pal! Your level has upgraded to Level ${player.level}. You have earned new stars.`;
+                let speechInstance = new SpeechSynthesisUtterance(congratulatoryStatement);
+                speechInstance.lang = 'en-US'; speechInstance.rate = 1.0;
+                window.speechSynthesis.speak(speechInstance);
+            } catch(error) { console.log("Speech output module pending interrupt hook.", error); }
+
+            setTimeout(() => { windowOverlay.style.display = 'none'; }, 1600);
         }
 
-        function updateHUDSystem() {
-            // Text nodes
-            document.getElementById('txt-pushup').innerText = `${player.quests.pushup} / 100 COMPLETED`;
-            document.getElementById('txt-situp').innerText = `${player.quests.situp} / 100 COMPLETED`;
-            document.getElementById('txt-run').innerText = `${player.quests.run} / 10 KM VECTOR`;
-
+        // SYNC INTERFACE STATUS AND DATA CHANNELS
+        function refreshHUDBars() {
             document.getElementById('hud-level').innerText = `LVL ${player.level}`;
-            document.getElementById('hud-exp-text').innerText = `${player.exp} / ${player.maxExp} ENERGETICS`;
+            document.getElementById('hud-exp-text').innerText = `${player.exp} / ${player.maxExp} EXP ENERGETICS`;
+            document.getElementById('hud-star-counter').innerHTML = `<span>⭐ STAR VAULT CORES:</span> <span style="font-size: 1.2rem; font-weight: 900;">${player.stars}</span>`;
 
-            // Bar math
-            let percent = (player.exp / player.maxExp) * 100;
-            document.getElementById('hud-exp-fill').style.width = `${percent}%`;
+            let ratio = (player.exp / player.maxExp) * 100;
+            document.getElementById('hud-exp-fill').style.width = `${ratio}%`;
 
-            renderLeaderboardMatrix();
+            renderGlobalMatrixLeaderboard();
         }
 
-        function renderLeaderboardMatrix() {
-            let combined = [...staticLeaderboardData, { name: player.name + " (You)", level: player.level, rank: player.rank }];
-            combined.sort((a, b) => b.level - a.level);
+        // COMPUTE LEADERBOARD DYNAMICS FOR RIVAL SYSTEM MASTERS
+        function renderGlobalMatrixLeaderboard() {
+            let coreStaticRivals = [
+                { name: "Sung Jin-Woo", level: 2200, class: "ULTRA PRO MAX" },
+                { name: "Thomas Andre", level: 1450, class: "PRO" },
+                { name: "Cha Hae-In", level: 850, class: "LEGEND" }
+            ];
+            let comprehensiveLeaderList = [...coreStaticRivals, { name: player.name + " (You)", level: player.level, class: player.class }];
+            comprehensiveLeaderList.sort((x, y) => y.level - x.level);
 
-            const container = document.getElementById('leaderboard-target');
-            container.innerHTML = '';
+            const displayTarget = document.getElementById('global-leaderboard-body');
+            displayTarget.innerHTML = '';
 
-            combined.forEach((hunter, idx) => {
-                let isCurrentPlayer = hunter.name.includes('(You)');
-                let rowHtml = `<tr class="${isCurrentPlayer ? 'highlight-me' : ''}">
-                    <td><strong>[#0${idx + 1}]</strong></td>
-                    <td style="font-weight: bold; letter-spacing:1px;">${hunter.name}</td>
-                    <td>GRID_LVL ${hunter.level}</td>
-                    <td><span style="color: var(--glow-cyan); font-weight: bold;">[${hunter.rank}_RANK]</span></td>
+            comprehensiveLeaderList.forEach((hunter, position) => {
+                let targetUserFlag = hunter.name.includes('(You)');
+                displayTarget.innerHTML += `<tr class="${targetUserFlag ? 'highlight-me' : ''}">
+                    <td><strong>[#0${position + 1}]</strong></td>
+                    <td style="font-weight: bold; letter-spacing:0.5px;">${hunter.name}</td>
+                    <td>GRID_CORE_LVL ${hunter.level}</td>
+                    <td><span style="color:var(--glow-cyan); font-weight:bold;">[${hunter.class}]</span></td>
                 </tr>`;
-                container.innerHTML += rowHtml;
             });
         }
     </script>
