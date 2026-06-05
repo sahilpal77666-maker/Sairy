@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAHIL THE SYSTEM - Monarch Console</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --glow-cyan: #00f3ff;
+            --glow-blue: #0066ff;
+            --dark-void: #020208;
+            --panel-alpha: rgba(6, 10, 22, 0.85);
+            --neon-red: #ff0055;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--dark-void);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 15px;
+        }
+
+        /* Hacker Background Matrix Canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* Scanline Overlay for Cyber Feel */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Header System Glitch Styling */
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--glow-cyan), 0 0 20px var(--glow-blue);
+            animation: titlePulse 2s infinite alternate;
+        }
+
+        @keyframes titlePulse {
+            0% { text-shadow: 0 0 8px var(--glow-cyan), 0 0 15px var(--glow-blue); }
+            100% { text-shadow: 0 0 18px var(--glow-cyan), 0 0 35px var(--glow-blue); }
+        }
+
+        /* Screen States */
+        .screen {
+            display: none;
+            animation: terminalBoot 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        .screen.active {
+            display: grid !important;
+        }
+
+        @keyframes terminalBoot {
+            0% { opacity: 0; transform: scaleY(0.005) scaleX(0); }
+            50% { opacity: 0.8; transform: scaleY(0.005) scaleX(1); }
+            100% { opacity: 1; transform: scaleY(1) scaleX(1); }
+        }
+
+        /* Hacker Registration Box */
+        .hacker-auth-box {
+            max-width: 550px;
+            margin: 50px auto;
+            background: var(--panel-alpha);
+            border: 2px solid var(--glow-cyan);
+            border-radius: 4px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+            position: relative;
+        }
+
+        .hacker-auth-box::before {
+            content: '[INITIALIZING AWAKENING KEY]';
+            position: absolute;
+            top: -12px; left: 20px;
+            background: var(--dark-void);
+            padding: 0 10px;
+            color: var(--glow-cyan);
+            font-size: 0.85rem;
+        }
+
+        .field-group {
+            margin-bottom: 22px;
+        }
+
+        .field-group label {
+            display: block;
+            color: var(--glow-cyan);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .field-group input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            padding: 12px;
+            color: #fff;
+            font-size: 1.05rem;
+            border-radius: 3px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .field-group input:focus {
+            border-color: var(--glow-cyan);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Custom Hologram Terminal Button */
+        .term-btn {
+            background: transparent;
+            color: var(--glow-cyan);
+            border: 1px solid var(--glow-cyan);
+            padding: 14px 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .term-btn:hover {
+            background: rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            text-shadow: 0 0 8px #fff;
+        }
+
+        /* Pro Dashboard Grid Layout */
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 850px) {
+            .dashboard-layout {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        /* Tech Panels */
+        .panel {
+            background: var(--panel-alpha);
+            border: 1px solid rgba(0, 38, 255, 0.4);
+            border-top: 3px solid var(--glow-blue);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--glow-cyan);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 6px;
+        }
+
+        /* Advanced Holographic ID Card */
+        .hollow-id-card {
+            background: linear-gradient(145deg, #070c18 0%, #02040a 100%);
+            border: 1px solid var(--glow-cyan);
+            padding: 20px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .hologram-viewport {
+            width: 110px;
+            height: 140px;
+            border: 1px solid var(--glow-cyan);
+            position: relative;
+            background: #000;
+            overflow: hidden;
+            margin: 0 auto 15px auto;
+        }
+
+        /* Scanning Line Animation overlay on profile picture */
+        .hologram-viewport::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: var(--glow-cyan);
+            box-shadow: 0 0 8px var(--glow-cyan);
+            top: 0; left: 0;
+            animation: cyberScan 2.5s linear infinite;
+        }
+
+        @keyframes cyberScan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        .hologram-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: hue-rotate(180deg) brightness(1.1) contrast(1.1);
+        }
+
+        .id-meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed rgba(0, 243, 255, 0.15);
+            padding-bottom: 4px;
+        }
+
+        .id-meta-label { color: rgba(0, 243, 255, 0.7); }
+        .id-meta-val { color: #fff; font-weight: bold; text-transform: uppercase;}
+
+        .stamp-rank {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--glow-cyan);
+            text-shadow: 0 0 15px var(--glow-cyan);
+        }
+
+        /* EXP HUD Progress Bar */
+        .hud-bar-container {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            height: 24px;
+            position: relative;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .hud-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--glow-blue), var(--glow-cyan));
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+
+        .hud-bar-text {
+            position: absolute;
+            width: 100%; text-align: center;
+            top: 50%; left: 0;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Quest Direct Nodes */
+        .quest-node {
+            background: rgba(4, 8, 18, 0.7);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 4px;
+        }
+
+        .quest-node.complete {
+            border-color: #00ff66;
+            background: rgba(0, 255, 102, 0.03);
+        }
+
+        .quest-action-btn {
+            background: transparent;
+            border: 1px solid var(--glow-cyan);
+            color: var(--glow-cyan);
+            padding: 6px 16px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .quest-action-btn:hover {
+            background: var(--glow-cyan);
+            color: #000;
+            box-shadow: 0 0 12px var(--glow-cyan);
+        }
+
+        /* Live Hacker Terminal Logs Box */
+        .terminal-console-box {
+            background: #020205;
+            border: 1px solid #222;
+            padding: 12px;
+            height: 120px;
+            overflow-y: auto;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: #00ff66;
+            margin-top: 20px;
+            border-left: 3px solid var(--glow-cyan);
+        }
+
+        .log-entry { margin-bottom: 4px; }
+        .log-entry::before { content: ">> "; color: var(--glow-cyan); }
+
+        /* Leaderboard Matrix Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { padding: 12px; text-align: left; }
+        th { color: var(--glow-cyan); border-bottom: 2px solid rgba(0, 243, 255, 0.3); font-family: 'Orbitron', sans-serif;}
+        td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        tr.highlight-me { background: rgba(0, 243, 255, 0.08); color: var(--glow-cyan); }
+
+        /* Level Burst Overlay Screen */
+        #level-flash-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .level-burst-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px var(--glow-cyan), 0 0 60px var(--glow-blue);
+            animation: textGlitch 0.3s infinite;
+        }
+
+        /* Screen Shake Animation triggers on main dashboard */
+        .shake-effect {
+            animation: masterShake 0.4s linear;
+        }
+
+        @keyframes masterShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+    </style>
+</head>
+<body id="core-body">
+
+    <!-- MATRIX MATRIX RUNNING ENGINE BACKGROUND -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="container">
+        
+        <header>
+            <div class="main-title">[ SAHIL THE SYSTEM ]</div>
+            <p style="color: rgba(255,255,255,0.5); letter-spacing: 2px; font-size: 0.9rem;">MONARCH PLAYER TERMINAL INTERFACE v4.0</p>
+        </header>
+
+        <!-- SCREEN 1: THE CYBER HACKER INITIALIZATION ENTRY -->
+        <div id="screen-reg" class="screen active">
+            <div class="hacker-auth-box">
+                <h3 style="margin-bottom: 20px; font-family:'Orbitron'; text-align:center; letter-spacing:1px;">IDENTIFICATION PROTOCOL</h3>
+                
+                <div class="field-group">
+                    <label>Hunter Persona Name</label>
+                    <input type="text" id="reg-name" placeholder="Execute designation lookup name..." autocomplete="off">
+                </div>
+
+                <div class="field-group">
+                    <label>Awakening Date (DOB)</label>
+                    <input type="date" id="reg-dob">
+                </div>
+
+                <div class="field-group">
+                    <label>Neural Identity Mapping (Profile Image)</label>
+                    <input type="file" id="reg-pic" accept="image/*">
+                </div>
+
+                <button class="term-btn" onclick="initializeAwakening()">Sync Neural Pattern & Boot</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: MAIN PRO HARDCORE ANIME HUD INTERFACE -->
+        <div id="screen-dashboard" class="screen dashboard-layout">
+            
+            <!-- LEFT PANEL: PROFILE + LIVE CODES -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- DIGITAL HUNTER LICENSE GRID CONTAINER -->
+                <div class="panel hollow-id-card">
+                    <div class="stamp-rank" id="hud-rank">E</div>
+                    
+                    <div class="hologram-viewport">
+                        <img id="hud-pic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%2305050a'/></svg>" alt="Hologram">
+                    </div>
+
+                    <div class="id-meta-row"><div class="id-meta-label">HUNTER:</div><div class="id-meta-val" id="hud-name">UNKNOWN</div></div>
+                    <div class="id-meta-row"><div class="id-meta-label">ID CODE:</div><div class="id-meta-val" id="hud-id">SYS-000000</div></div>
+                    <div class="id-meta-row"><div class="id-meta-label">SYNCHRONIZED:</div><div class="id-meta-val" id="hud-dob">00/00/0000</div></div>
+                    <div class="id-meta-row"><div class="id-meta-label">CLASS MATRIX:</div><div class="id-meta-val" style="color: var(--glow-cyan);">SHADOW MONARCH</div></div>
+                </div>
+
+                <!-- HUD PROGRESS MATRIX LEVEL CONTROLLER -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span>SYSTEM ENGINE STATUS</span>
+                        <span id="hud-level" style="color: #fff; font-weight: 900;">LVL 1</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4);">EXP REQUISITION CAPACITY</p>
+                    <div class="hud-bar-container">
+                        <div class="hud-bar-fill" id="hud-exp-fill"></div>
+                        <div class="hud-bar-text" id="hud-exp-text">0 / 100</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: QUEST LOGS AND LEADERBOARDS CORE -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- QUEST CONTROLLER HUD NODES -->
+                <div class="panel">
+                    <div class="panel-title"><span>DAILY OVERLOAD MANDATORY QUESTS</span></div>
+                    
+                    <div class="quest-node" id="qn-pushup">
+                        <div>
+                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[01] PUSH-UPS MATRIX REPS</span>
+                            <span id="txt-pushup" style="color: #888; font-size: 0.9rem;">0 / 100 COMPLETE</span>
+                        </div>
+                        <button class="quest-action-btn" onclick="executeQuestNode('pushup', 10, 100)">+10 REPS</button>
+                    </div>
+
+                    <div class="quest-node" id="qn-situp">
+                        <div>
+                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[02] SIT-UPS KINETIC DATA</span>
+                            <span id="txt-situp" style="color: #888; font-size: 0.9rem;">0 / 100 COMPLETE</span>
+                        </div>
+                        <button class="quest-action-btn" onclick="executeQuestNode('situp', 10, 100)">+10 REPS</button>
+                    </div>
+
+                    <div class="quest-node" id="qn-run">
+                        <div>
+                            <span style="font-size: 1.1rem; font-weight: bold; display: block;">[03] VELOCITY RUN SPATIAL TRAIL</span>
+                            <span id="txt-run" style="color: #888; font-size: 0.9rem;">0 / 10 KM VECTOR</span>
+                        </div>
+                        <button class="quest-action-btn" onclick="executeQuestNode('run', 1, 10)">+1 KM</button>
+                    </div>
+                </div>
+
+                <!-- THE REAL-TIME SYSTEM LOG OUTPUT STREAM -->
+                <div class="panel" style="border-top-color: var(--neon-red);">
+                    <div class="panel-title"><span>LIVE SYSTEM ENGINE COMMAND SHELL</span></div>
+                    <div class="terminal-console-box" id="terminal-logger">
+                        <div class="log-entry">SYSTEM ONLINE: Welcome, Shadow Monarch Master Sahil.</div>
+                    </div>
+                </div>
+
+                <!-- GLOBAL LEADERBOARD HUD DATA -->
+                <div class="panel">
+                    <div class="panel-title"><span>SUPREME MATRIX HUNTER HALL OF FAME</span></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>GRID RANK</th>
+                                <th>MONARCH IDENTIFICATION</th>
+                                <th>LEVEL</th>
+                                <th>COMPLIANCE STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-target">
+                            <!-- Injected Dynamically by System Core Engine -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN LEVEL BREAKOUT BURST HUD OVERLAY -->
+    <div id="level-flash-overlay">
+        <div class="level-burst-text">LEVEL UP</div>
+        <div style="font-family:'Orbitron'; color: var(--glow-cyan); letter-spacing: 8px; margin-top: 10px;">CAPACITY EXTENDED</div>
+    </div>
+
+    <script>
+        // 1. ADVANCED HACKER BACKGROUND MATRIX MATRIX ENGINE
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const matrixChars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ".split("");
+        const fontSize = 14;
+        let columns = canvas.width / fontSize;
+        let rainDrops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrixRain() {
+            ctx.fillStyle = 'rgba(2, 2, 8, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+        setInterval(drawMatrixRain, 33);
+
+        // 2. CORE GAME SYSTEM LOGIC
+        let player = {
+            name: "Unknown Master",
+            dob: "Classified",
+            id: "SAHIL-" + Math.floor(100000 + Math.random() * 899999),
+            level: 1,
+            exp: 0,
+            maxExp: 100,
+            rank: 'E',
+            quests: { pushup: 0, situp: 0, run: 0 }
+        };
+
+        let staticLeaderboardData = [
+            { name: "Sung Jin-Woo", level: 999, rank: "S" },
+            { name: "Thomas Andre", level: 912, rank: "S" },
+            { name: "Cha Hae-In", level: 742, rank: "A" },
+            { name: "Baek Yoonho", level: 610, rank: "A" }
+        ];
+
+        function printLog(message) {
+            const logger = document.getElementById('terminal-logger');
+            const entry = document.createElement('div');
+            entry.className = "log-entry";
+            entry.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logger.appendChild(entry);
+            logger.scrollTop = logger.scrollHeight;
+        }
+
+        function initializeAwakening() {
+            const name = document.getElementById('reg-name').value;
+            const dob = document.getElementById('reg-dob').value;
+            const pic = document.getElementById('reg-pic').files[0];
+
+            if(!name || name.trim() === "") {
+                alert("CRITICAL ERROR: Hunter Authentication Name Matrix cannot be empty.");
+                return;
+            }
+
+            player.name = name;
+            player.dob = dob ? dob : "UNKNOWN MAP";
+
+            // Sync elements to interface dashboard
+            document.getElementById('hud-name').innerText = player.name;
+            document.getElementById('hud-dob').innerText = player.dob;
+            document.getElementById('hud-id').innerText = player.id;
+
+            if(pic) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('hud-pic').src = e.target.result;
+                }
+                reader.readAsDataURL(pic);
+            } else {
+                document.getElementById('hud-pic').src = "https://via.placeholder.com/150/020208/00f3ff?text=HOLOGRAM+ONLINE";
+            }
+
+            // Switch Screen State cleanly
+            document.getElementById('screen-reg').classList.remove('active');
+            document.getElementById('screen-dashboard').classList.add('active');
+
+            printLog(`AWAKENING SEQUENCE FULLY SYNCED. Welcome ${player.name} to the Core.`);
+            updateHUDSystem();
+        }
+
+        function executeQuestNode(type, val, targetMax) {
+            if(player.quests[type] < targetMax) {
+                player.quests[type] += val;
+                if(player.quests[type] > targetMax) player.quests[type] = targetMax;
+
+                printLog(`INCOMING RESOURCE SIGNAL: Registered +${val} metrics to [${type.toUpperCase()}] matrix.`);
+                
+                // Add System EXP reward
+                player.exp += 30;
+
+                if(player.quests[type] === targetMax) {
+                    document.getElementById('qn-' + type).classList.add('complete');
+                    printLog(`QUEST MILESTONE: [${type.toUpperCase()}] fully optimized to maximum thresholds!`);
+                }
+
+                evaluateLevelTree();
+                updateHUDSystem();
+            } else {
+                printLog(`SYSTEM OVERLOAD NOTICE: [${type.toUpperCase()}] threshold already capped for solar cycle.`);
+            }
+        }
+
+        function evaluateLevelTree() {
+            if(player.exp >= player.maxExp && player.level < 1000) {
+                player.level++;
+                player.exp = player.exp - player.maxExp;
+                player.maxExp = Math.floor(player.maxExp * 1.45);
+
+                executeRankRecalibration();
+                triggerCinematicLevelUp();
+
+                if(player.exp >= player.maxExp) evaluateLevelTree();
+            }
+        }
+
+        function executeRankRecalibration() {
+            if(player.level > 10) player.rank = 'D';
+            if(player.level > 35) player.rank = 'C';
+            if(player.level > 70) player.rank = 'B';
+            if(player.level > 150) player.rank = 'A';
+            if(player.level > 300) player.rank = 'S';
+            document.getElementById('hud-rank').innerText = player.rank;
+        }
+
+        function triggerCinematicLevelUp() {
+            printLog(`CRITICAL ANNOUNCEMENT: Level limits shattered! Current Grid Status: LVL ${player.level}`);
+            
+            // Trigger overlay
+            const overlay = document.getElementById('level-flash-overlay');
+            overlay.style.display = 'flex';
+            
+            // Screen Shake trigger
+            document.getElementById('core-body').classList.add('shake-effect');
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('core-body').classList.remove('shake-effect');
+            }, 1300);
+        }
+
+        function updateHUDSystem() {
+            // Text nodes
+            document.getElementById('txt-pushup').innerText = `${player.quests.pushup} / 100 COMPLETED`;
+            document.getElementById('txt-situp').innerText = `${player.quests.situp} / 100 COMPLETED`;
+            document.getElementById('txt-run').innerText = `${player.quests.run} / 10 KM VECTOR`;
+
+            document.getElementById('hud-level').innerText = `LVL ${player.level}`;
+            document.getElementById('hud-exp-text').innerText = `${player.exp} / ${player.maxExp} ENERGETICS`;
+
+            // Bar math
+            let percent = (player.exp / player.maxExp) * 100;
+            document.getElementById('hud-exp-fill').style.width = `${percent}%`;
+
+            renderLeaderboardMatrix();
+        }
+
+        function renderLeaderboardMatrix() {
+            let combined = [...staticLeaderboardData, { name: player.name + " (You)", level: player.level, rank: player.rank }];
+            combined.sort((a, b) => b.level - a.level);
+
+            const container = document.getElementById('leaderboard-target');
+            container.innerHTML = '';
+
+            combined.forEach((hunter, idx) => {
+                let isCurrentPlayer = hunter.name.includes('(You)');
+                let rowHtml = `<tr class="${isCurrentPlayer ? 'highlight-me' : ''}">
+                    <td><strong>[#0${idx + 1}]</strong></td>
+                    <td style="font-weight: bold; letter-spacing:1px;">${hunter.name}</td>
+                    <td>GRID_LVL ${hunter.level}</td>
+                    <td><span style="color: var(--glow-cyan); font-weight: bold;">[${hunter.rank}_RANK]</span></td>
+                </tr>`;
+                container.innerHTML += rowHtml;
+            });
+        }
+    </script>
+</body>
+</html>
